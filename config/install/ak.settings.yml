@@ -1,0 +1,6 @@
+avatar_generator:
+  default: 'user'
+  fallback: ''
+refresh_interval:
+  dynamic: 3600
+  static: -1

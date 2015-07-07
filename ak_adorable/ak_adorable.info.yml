@@ -1,0 +1,7 @@
+name: Adorable
+type: module
+description: 'Adds an Adorable.io avatar generator for Avatar Kit.'
+package: AK
+core: 8.x
+dependencies:
+  - ak

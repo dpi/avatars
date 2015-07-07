@@ -1,0 +1,22 @@
+ak.settings:
+  type: mapping
+  label: 'Avatar Kit settings'
+  mapping:
+    avatar_generator:
+      type: mapping
+      mapping:
+        default:
+          type: string
+          label: 'Default avatar generator'
+        fallback:
+          type: string
+          label: 'Fallback avatar generator'
+    refresh_interval:
+      type: mapping
+      mapping:
+        dynamic:
+          type: integer
+          label: 'How long should dynamic avatars be cached before allowing refresh.'
+        static:
+          type: integer
+          label: 'How long should non-preferred static avatars be cached. Leave empty to never delete. Preferred static avatars never expire.'

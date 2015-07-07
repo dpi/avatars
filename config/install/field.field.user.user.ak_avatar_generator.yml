@@ -1,0 +1,18 @@
+id: user.user.ak_avatar_generator
+field_name: ak_avatar_generator
+entity_type: user
+bundle: user
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.ak_avatar_generator
+  module:
+    - options
+    - ak
+label: 'Avatar Generator'
+description: 'Select source of avatar. Or choose `None` to use site default.'
+required: false
+translatable: true
+settings: {  }
+field_type: list_string

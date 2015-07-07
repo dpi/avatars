@@ -1,0 +1,7 @@
+ak.config:
+  path: '/admin/config/people/avatars'
+  defaults:
+    _form: '\Drupal\ak\Form\Settings'
+    _title: 'Avatar Kit settings'
+  requirements:
+    _permission: 'administer ak'

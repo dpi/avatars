@@ -1,0 +1,5 @@
+ak.config:
+  title: 'Avatar settings'
+  parent: user.admin_index
+  description: 'Manage avatar generator settings.'
+  route_name: ak.config
