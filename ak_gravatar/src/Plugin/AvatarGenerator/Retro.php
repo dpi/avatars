@@ -25,7 +25,10 @@ use Drupal\ak_gravatar\Gravatar as GravatarAPI;
  */
 class Retro extends AvatarGeneratorBase {
 
-  function generateURI(AccountInterface $account){
+  /**
+   * {@inheritdoc}
+   */
+  public function generateUri(AccountInterface $account) {
     $gravatar = new GravatarAPI();
     return $gravatar
       ->setIdentifier($account->getEmail())

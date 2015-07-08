@@ -25,7 +25,7 @@ class Robohash extends AvatarBase implements RobohashInterface {
   /**
    * Constructs a new Robohash object.
    */
-  function __construct() {
+  public function __construct() {
     $this->setDimensionConstraints(
       Robohash::DIMENSION_MINIMUM_WIDTH,
       Robohash::DIMENSION_MAXIMUM_WIDTH,
@@ -67,14 +67,14 @@ class Robohash extends AvatarBase implements RobohashInterface {
   /**
    * {@inheritdoc}
    */
-  function getBackground() {
+  public function getBackground() {
     return $this->background;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setBackground($background = NULL) {
+  public function setBackground($background = NULL) {
     if (!array_key_exists($background, $this->getBackgrounds())) {
       throw new AvatarException('Invalid background');
     }
@@ -137,7 +137,7 @@ class Robohash extends AvatarBase implements RobohashInterface {
     if ($type == 'any') {
       $kv['set'] = 'any';
     }
-    else if (!empty($type) && ($type != key($type_map))) {
+    elseif (!empty($type) && ($type != key($type_map))) {
       $kv['set'] = 'set' . $type_map[$type];
     }
 

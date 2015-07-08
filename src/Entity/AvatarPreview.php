@@ -32,14 +32,14 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
   /**
    * {@inheritdoc}
    */
-  function getAvatarGenerator() {
+  public function getAvatarGenerator() {
     return $this->get('avatar_generator')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setAvatarGenerator($avatar_generator) {
+  public function setAvatarGenerator($avatar_generator) {
     $this->set('avatar_generator', $avatar_generator);
     return $this;
   }
@@ -78,14 +78,14 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
   /**
    * {@inheritdoc}
    */
-  function getCreatedTime() {
+  public function getCreatedTime() {
     return $this->get('created')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp) {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -93,14 +93,14 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
   /**
    * {@inheritdoc}
    */
-  function getScope() {
+  public function getScope() {
     return $this->get('scope')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setScope($scope) {
+  public function setScope($scope) {
     $this->set('scope', $scope);
     return $this;
   }
@@ -199,6 +199,5 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
       }
     }
   }
-
 
 }

@@ -45,7 +45,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
   /**
    * Constructs a new Gravatar object.
    */
-  function __construct() {
+  public function __construct() {
     $this->fallbackType = '404';
     $this->setDimensionConstraints(
       GravatarInterface::DIMENSION_MINIMUM_WIDTH,
@@ -124,7 +124,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
   /**
    * {@inheritdoc}
    */
-  public function setFallbackURI($uri) {
+  public function setFallbackUri($uri) {
     $this->fallbackURI = $uri;
     $this->fallbackType = NULL;
     return $this;
@@ -163,7 +163,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
   /**
    * {@inheritdoc}
    */
-  function setIdentifier($identifier, $pre_hashed = FALSE) {
+  public function setIdentifier($identifier, $pre_hashed = FALSE) {
     if ($pre_hashed && strlen($identifier) > 32) {
       throw new AvatarException('API does not generate unique avatars after 32nd character.');
     }
@@ -198,7 +198,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
       if (isset($this->fallbackType)) {
         $kv['d'] = $this->fallbackType;
       }
-      else if (isset($this->fallbackURI)) {
+      elseif (isset($this->fallbackURI)) {
         // Fallback URI is already urlencode'd by http_build_query().
         $kv['d'] = $this->fallbackURI;
       }

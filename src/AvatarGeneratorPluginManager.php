@@ -33,6 +33,9 @@ class AvatarGeneratorPluginManager extends DefaultPluginManager implements Avata
     return 'broken';
   }
 
+  /**
+   * Gets the definition of all non broken plugins for this type.
+   */
   public function getDefinitions() {
     $definitions = parent::getDefinitions();
     foreach ($definitions as $k => $definition) {
@@ -42,6 +45,5 @@ class AvatarGeneratorPluginManager extends DefaultPluginManager implements Avata
     }
     return $definitions;
   }
-
 
 }

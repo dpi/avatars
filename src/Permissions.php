@@ -48,6 +48,7 @@ class Permissions implements ContainerInjectionInterface {
    * Define permissions for picture providers.
    *
    * @return array
+   *   An array of permissions.
    */
   public function avatarGenerators() {
     $permissions = [];

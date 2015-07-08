@@ -7,12 +7,16 @@
 
 namespace Drupal\ak;
 
+/**
+ * Interface for Avatar APIs.
+ */
 interface AvatarBaseInterface {
 
   /**
    * Gets the request host name.
    *
    * @return string
+   *   A host name.
    */
   public function getHostName();
 
@@ -28,19 +32,19 @@ interface AvatarBaseInterface {
   public function setHostName($hostname = NULL);
 
   /**
-   * Gets the identifier
+   * Gets the identifier.
    *
    * @return string
    *   The identifier.
    */
-  function getIdentifier();
+  public function getIdentifier();
 
   /**
    * Sets a unique identifier to be passed to the API.
    *
    * @param string $identifier
    *   A unique identifier, such as an e-mail address.
-   * @param boolean $pre_hashed
+   * @param bool $pre_hashed
    *   Whether the ID has been pre-obfuscated, otherwise it will happen when the
    *   URL is generated.
    *
@@ -50,37 +54,47 @@ interface AvatarBaseInterface {
    * @return \Drupal\ak\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    */
-  function setIdentifier($identifier, $pre_hashed = FALSE);
+  public function setIdentifier($identifier, $pre_hashed = FALSE);
 
   /**
    * Determines if the set identifier was prehashed.
    *
-   * @return boolean|NULL
+   * @return bool|NULL
    *   boolean if identifier has been set, otherwise NULL.
    */
   public function identifierIsPreHashed();
 
   /**
-   * @return array
+   * Gets list of avatar types provided by this API.
+   *
+   * @return string[]
    *   An array of type labels, keyed by type.
    */
   static public function getTypes();
 
+  /**
+   * Gets the avatar type.
+   */
   public function getType();
 
   /**
-   * @param $type
+   * Sets the avatar type.
+   *
+   * @param string $type
+   *   The avatar type.
    *
    * @throws \Drupal\ak\Exception\AvatarException
    *   Thrown if this the type is not defined.
    *
    * @return \Drupal\ak\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
+   *
+   * @see \Drupal\ak\AvatarBaseInterface::getTypes()
    */
   public function setType($type);
 
   /**
-   * Sets dimensions to get form the endpoint
+   * Sets dimensions to get form the endpoint.
    *
    * @param int $width
    *   The width of the avatar.
@@ -98,7 +112,7 @@ interface AvatarBaseInterface {
   /**
    * Whether the URL will be secure.
    *
-   * @return boolean
+   * @return bool
    *   Whether the URL should be secure.
    */
   public function isSecure();
@@ -106,7 +120,7 @@ interface AvatarBaseInterface {
   /**
    * Sets the request to secure.
    *
-   * @param boolean $secure_request
+   * @param bool $secure_request
    *   If the request should be secure.
    *
    * @throws \Drupal\ak\Exception\AvatarException
@@ -135,6 +149,7 @@ interface AvatarBaseInterface {
    *   Thrown if missing parameters.
    *
    * @return string
+   *   A URL for an avatar.
    */
   public function getUrl();
 

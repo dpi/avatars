@@ -18,7 +18,6 @@ use Drupal\ak\AvatarPreviewInterface;
 /**
  * Configure avatar kit settings.
  */
-
 class Settings extends ConfigFormBase {
 
   /**
@@ -35,7 +34,6 @@ class Settings extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\ak\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
-   *
    */
   public function __construct(ConfigFactoryInterface $config_factory, AvatarGeneratorPluginManagerInterface $avatar_generator) {
     parent::__construct($config_factory);
@@ -110,7 +108,7 @@ class Settings extends ConfigFormBase {
       '#options' => $avatar_generators_fallback,
       '#title' => $this->t('Fallback avatar generator'),
       '#description' => $this->t("Avatar generator to use when the site default or users' preference does not produce an avatar."),
-      // link to none: admin/config/people/accounts/fields/user.user.user_picture#edit-settings-default-image
+      // Link to none: admin/config/people/accounts/fields/user.user.user_picture#edit-settings-default-image
       '#default_value' => $generators['fallback'],
     ];
 
@@ -133,6 +131,11 @@ class Settings extends ConfigFormBase {
       '#min' => 0,
     ];
 
+    /*
+     * Keep unused avatars on file system (will use up more disk space)
+     * Avatars must be purged manually if you change this settings.
+     * Expire unused static avatars (will use up more network bandwidth)
+     * */
     $form['refresh_interval']['static'] = [
       '#type' => 'number',
       '#title' => $this->t('Static lifetime'),
@@ -141,9 +144,6 @@ class Settings extends ConfigFormBase {
       '#step' => 60,
       '#min' => -1,
     ];
-    /* *  Keep unused avatars on file system (will use up more disk space)
-          Avatars must be purged manually if you change this settings.
-       *  Expire unused static avatars (will use up more network bandwidth) */
 
     return $form;
   }

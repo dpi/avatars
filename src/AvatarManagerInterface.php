@@ -7,6 +7,7 @@
 
 namespace Drupal\ak;
 
-interface AvatarManagerInterface {
-
-}
+/**
+ * Provides an interface to the avatar manager service.
+ */
+interface AvatarManagerInterface {}

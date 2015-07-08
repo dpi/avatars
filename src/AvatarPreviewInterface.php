@@ -11,10 +11,13 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
 
+/**
+ * Provides an interface for the avatar preview entity.
+ */
 interface AvatarPreviewInterface extends ContentEntityInterface {
 
   /**
-   * Scopes
+   * Scopes.
    *
    * Scopes are used for cleanup operations. Dynamic avatar previews will always
    * expire according to dynamic_lifetime configuration. Only static avatar
@@ -39,8 +42,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
   const SCOPE_TEMPORARY = 0;
 
   /**
-   * Whether the avatar preview was generated due to a an individual users
-   * preference.
+   * Whether the avatar preview was generated due to user preference.
    *
    * If the user changes its' avatar generator preference, the preview will be
    * purged immediately.
@@ -50,8 +52,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
   const SCOPE_USER_SELECTED = 1;
 
   /**
-   * Whether the avatar preview was generated due to the user not having
-   * selected its own avatar generator.
+   * Whether the avatar preview was generated due to no user preference.
    *
    * If the site default avatar avatar generator preference changes, all
    * previews with this scope will be purged immediately.
@@ -61,8 +62,9 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
   const SCOPE_SITE_DEFAULT = 2;
 
   /**
-   * Whether the avatar preview was generated due to the user selected or site
-   * site default generator failing.
+   * Whether the avatar preview was generated due to failed first preference.
+   *
+   * May be user preference or default generator failed.
    *
    * If the site fallback avatar avatar generator preference changes, all
    * previews with this scope will be purged immediately.
@@ -75,8 +77,9 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * Get avatar generator plugin ID.
    *
    * @return string
+   *   An avatar generator plugin ID.
    */
-  function getAvatarGenerator();
+  public function getAvatarGenerator();
 
   /**
    * Set avatar generator plugin ID.
@@ -87,7 +90,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return \Drupal\ak\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
-  function setAvatarGenerator($avatar_generator);
+  public function setAvatarGenerator($avatar_generator);
 
   /**
    * Get associated user.
@@ -133,7 +136,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return int
    *   Timestamp of the creation date.
    */
-  function getCreatedTime();
+  public function getCreatedTime();
 
   /**
    * Sets the creation time of the avatar preview.
@@ -144,7 +147,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return \Drupal\ak\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
-  function setCreatedTime($timestamp);
+  public function setCreatedTime($timestamp);
 
   /**
    * Gets the scope of the avatar preview.
@@ -152,7 +155,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return int
    *   Value of a \Drupal\ak\AvatarPreviewInterface::SCOPE_* constant.
    */
-  function getScope();
+  public function getScope();
 
   /**
    * Sets the scope of the avatar preview.
@@ -163,7 +166,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return \Drupal\ak\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
-  function setScope($scope);
+  public function setScope($scope);
 
   /**
    * Queries for an avatar preview and loads it.

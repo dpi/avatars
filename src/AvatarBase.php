@@ -9,6 +9,9 @@ namespace Drupal\ak;
 
 use Drupal\ak\Exception\AvatarException;
 
+/**
+ * Abstract class for Avatar APIs.
+ */
 abstract class AvatarBase implements AvatarBaseInterface {
 
   protected $hostname;
@@ -83,21 +86,21 @@ abstract class AvatarBase implements AvatarBaseInterface {
   /**
    * {@inheritdoc}
    */
-  function getIdentifier() {
+  public function getIdentifier() {
     return $this->identifier;
   }
 
   /**
    * {@inheritdoc}
    */
-  function identifierIsPreHashed() {
+  public function identifierIsPreHashed() {
     return $this->prehashed;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setIdentifier($identifier, $pre_hashed = FALSE) {
+  public function setIdentifier($identifier, $pre_hashed = FALSE) {
     if (!is_scalar($identifier)) {
       throw new AvatarException('Invalid identifier');
     }
@@ -143,7 +146,7 @@ abstract class AvatarBase implements AvatarBaseInterface {
   }
 
   /**
-   * Sets constraints for avatar dimensions
+   * Sets constraints for avatar dimensions.
    *
    * @param int $width_minimum
    *   The minimum width.

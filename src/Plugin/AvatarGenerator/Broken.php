@@ -22,7 +22,7 @@ class Broken extends AvatarGeneratorBase {
   /**
    * {@inheritdoc}
    */
-  function generateURI(AccountInterface $account){
+  public function generateUri(AccountInterface $account) {
     return '';
   }
 

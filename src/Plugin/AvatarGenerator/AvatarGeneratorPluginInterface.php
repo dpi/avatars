@@ -15,17 +15,25 @@ use Drupal\Core\Session\AccountInterface;
 interface AvatarGeneratorPluginInterface {
 
   /**
+   * Gets File object for an avatar.
+   *
    * @param AccountInterface $account
+   *   A user account.
    *
    * @return \Drupal\file\FileInterface
+   *   A file object.
    */
-  function getFile(AccountInterface $account);
+  public function getFile(AccountInterface $account);
 
   /**
+   * Creates a URI to an avatar.
+   *
    * @param AccountInterface $account
+   *   A user account.
    *
    * @return string
+   *   URI to an image file.
    */
-  function generateURI(AccountInterface $account);
+  public function generateUri(AccountInterface $account);
 
 }

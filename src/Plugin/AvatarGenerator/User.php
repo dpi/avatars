@@ -26,18 +26,12 @@ class User extends AvatarGeneratorBase {
   /**
    * {@inheritdoc}
    */
-  function getFile(AccountInterface $account) {
+  public function getFile(AccountInterface $account) {
     if (!$account->isAnonymous() && $user = CoreUser::load($account->id())) {
       $entities = $user->{AK_FIELD_PICTURE_USER}->referencedEntities();
       return reset($entities);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function generateURI(AccountInterface $account){
-    return '';
+    return NULL;
   }
 
 }

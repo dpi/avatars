@@ -17,7 +17,7 @@ use Drupal\user\UserInterface;
 use Drupal\file\FileInterface;
 
 /**
- * Avatar manager.
+ * Provides an avatar manager service.
  */
 class AvatarManager implements AvatarManagerInterface {
 
@@ -167,7 +167,7 @@ class AvatarManager implements AvatarManagerInterface {
     $file = $plugin->getFile($user);
 
     // Otherwise get the URL of the avatar, download it, and store it as a file.
-    if (!$file && $url = $plugin->generateURI($user)) {
+    if (!$file && $url = $plugin->generateUri($user)) {
       $directory = 'public://avatar_kit/' . $avatar_generator;
       if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
         try {
@@ -176,7 +176,8 @@ class AvatarManager implements AvatarManagerInterface {
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }
-        } catch (ClientException $e) {
+        }
+        catch (ClientException $e) {
         }
       }
     }
@@ -195,7 +196,7 @@ class AvatarManager implements AvatarManagerInterface {
    * @return \Generator
    */
   public function getPreferences(UserInterface $user) {
-    // User preference
+    // User preference.
     $user_preference = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
     if ($user_preference && $this->avatarGenerator->getDefinition($user_preference, FALSE)) {
       yield AvatarPreviewInterface::SCOPE_USER_SELECTED => $user_preference;
@@ -207,7 +208,7 @@ class AvatarManager implements AvatarManagerInterface {
         ->get('avatar_generator');
       yield AvatarPreviewInterface::SCOPE_SITE_DEFAULT => $generators['default'];
     }
-    // Site fallback
+    // Site fallback.
     yield AvatarPreviewInterface::SCOPE_SITE_FALLBACK => $this->getFallbackAvatarGenerator();
   }
 

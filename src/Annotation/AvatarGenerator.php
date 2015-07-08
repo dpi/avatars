@@ -63,8 +63,10 @@ class AvatarGenerator extends Plugin {
   public $fallback = FALSE;
 
   /**
+   * Defines the source of the avatar.
+   *
    * Whether the generator produces a URI for downloading the avatar (uses
-   * generateURI method). Otherwise the file is already local (use getFile
+   * generateUri method). Otherwise the file is already local (use getFile
    * method).
    *
    * @var bool

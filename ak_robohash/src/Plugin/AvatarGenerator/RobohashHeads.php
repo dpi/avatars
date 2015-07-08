@@ -25,7 +25,10 @@ use Drupal\ak_robohash\Robohash as RobohashAPI;
  */
 class RobohashHeads extends AvatarGeneratorBase {
 
-  function generateURI(AccountInterface $account){
+  /**
+   * {@inheritdoc}
+   */
+  public function generateUri(AccountInterface $account) {
     $robohash = new RobohashAPI();
     return $robohash
       ->setIdentifier($account->getEmail())

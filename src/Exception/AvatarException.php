@@ -10,4 +10,4 @@ namespace Drupal\ak\Exception;
 /**
  * Defines an exception for Avatars.
  */
-class AvatarException extends \Exception { }
+class AvatarException extends \Exception {}

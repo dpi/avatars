@@ -17,14 +17,14 @@ abstract class AvatarGeneratorBase implements AvatarGeneratorPluginInterface {
   /**
    * {@inheritdoc}
    */
-  function getFile(AccountInterface $account) {
+  public function getFile(AccountInterface $account) {
     return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  function generateURI(AccountInterface $account) {
+  public function generateUri(AccountInterface $account) {
     return NULL;
   }
 

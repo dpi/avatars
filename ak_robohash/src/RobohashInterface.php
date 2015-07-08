@@ -7,6 +7,9 @@
 
 namespace Drupal\ak_robohash;
 
+/**
+ * Provides an interface to the Robohash.org API.
+ */
 interface RobohashInterface {
 
   /*
@@ -53,7 +56,7 @@ interface RobohashInterface {
   public static function getBackgrounds();
 
   /**
-   * Backgrounds mapped to GET values
+   * Backgrounds mapped to GET values.
    *
    * @return array
    *   An array of GET values keyed by background.
@@ -66,7 +69,7 @@ interface RobohashInterface {
    * @return string|NULL
    *   The background, or NULL for default.
    */
-  function getBackground();
+  public function getBackground();
 
   /**
    * Set the background.
@@ -77,10 +80,10 @@ interface RobohashInterface {
    * @return \Drupal\ak_robohash\RobohashInterface
    *   Returns the called Robohash object for chaining.
    */
-  function setBackground($background = NULL);
+  public function setBackground($background = NULL);
 
   /**
-   * Avatar types mapped to GET values
+   * Avatar types mapped to GET values.
    *
    * @return array
    *   An array of GET values keyed by type.

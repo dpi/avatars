@@ -7,6 +7,9 @@
 
 namespace Drupal\ak_adorable;
 
+/**
+ * Interface for the Adorable.io API.
+ */
 interface AdorableInterface {
 
   /*

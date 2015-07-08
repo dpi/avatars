@@ -18,7 +18,7 @@ class Adorable extends AvatarBase implements AdorableInterface {
   /**
    * Constructs a new Adorable object.
    */
-  function __construct() {
+  public function __construct() {
     $this->setDimensionConstraints(
       Adorable::DIMENSION_MINIMUM_WIDTH,
       Adorable::DIMENSION_MAXIMUM_WIDTH
@@ -58,7 +58,7 @@ class Adorable extends AvatarBase implements AdorableInterface {
   public function getUrl() {
     $url = ($this->isSecure() ? 'https://' : 'http://') . $this->getHostName() . '/avatars/';
 
-    // width can be omitted
+    // Width can be omitted.
     if (is_numeric($this->width)) {
       $url .= $this->width . '/';
     }

@@ -25,7 +25,10 @@ use Drupal\ak_adorable\Adorable as AdorableAPI;
  */
 class Adorable extends AvatarGeneratorBase {
 
-  function generateURI(AccountInterface $account){
+  /**
+   * {@inheritdoc}
+   */
+  public function generateUri(AccountInterface $account) {
     $api = new AdorableAPI();
     return $api
       ->setIdentifier($account->getEmail())

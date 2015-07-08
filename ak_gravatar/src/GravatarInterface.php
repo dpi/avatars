@@ -7,6 +7,9 @@
 
 namespace Drupal\ak_gravatar;
 
+/**
+ * Provides an interface for the Gravatar.com API.
+ */
 interface GravatarInterface {
 
   /*
@@ -38,7 +41,7 @@ interface GravatarInterface {
   const DIMENSION_MAXIMUM_WIDTH = 2048;
 
   /**
-   * Avatar types mapped to 'd' GET values
+   * Avatar types mapped to 'd' GET values.
    *
    * @return array
    *   An array of GET values keyed by type.
@@ -46,8 +49,7 @@ interface GravatarInterface {
   static public function getTypesMap();
 
   /**
-   * Types which can be used as a fallback when using 'gravatar' as the primary
-   * type.
+   * Valid fallback types for when 'gravatar' is the primary type.
    *
    * @return string[]
    *   An array of fallback avatar types.
@@ -63,8 +65,9 @@ interface GravatarInterface {
   public function getFallbackType();
 
   /**
-   * The type that should be used if the main type is 'gravatar', and there is
-   * no Gravatar for the hash.
+   * The type used for when 'gravatar' type fails.
+   *
+   * Such as when there is no Gravatar for the hash.
    *
    * @param string|NULL $type
    *   An avatar type.
@@ -78,8 +81,9 @@ interface GravatarInterface {
   public function setFallbackType($type = NULL);
 
   /**
-   * The URI to an image that should be used if the main type is 'gravatar', and
-   * there is no Gravatar for the hash.
+   * The URI to an image used for when 'gravatar' type fails.
+   *
+   * Such as when there is no Gravatar for the hash.
    *
    * @param string $uri
    *   The URI of an image to use as a fallback.
@@ -87,7 +91,7 @@ interface GravatarInterface {
    * @return \Drupal\ak_gravatar\GravatarInterface
    *   Returns the called object for chaining.
    */
-  public function setFallbackURI($uri);
+  public function setFallbackUri($uri);
 
   /**
    * Get a list of valid ratings.
