@@ -118,6 +118,7 @@ class Settings extends ConfigFormBase {
       '#options' => $image_styles,
       '#title' => $this->t('Preference form image style'),
       '#description' => $this->t('Select image style to use in the users avatar generator preference form.'),
+      '#access' => FALSE,
     ];
 
     $form['refresh_interval']['#tree'] = TRUE;
