@@ -130,6 +130,7 @@ class Settings extends ConfigFormBase {
       '#default_value' => $intervals['dynamic'],
       '#step' => 60,
       '#min' => 0,
+      '#field_suffix' => $this->t('seconds'),
     ];
 
     /*
@@ -144,6 +145,7 @@ class Settings extends ConfigFormBase {
       '#default_value' => $intervals['static'],
       '#step' => 60,
       '#min' => -1,
+      '#field_suffix' => $this->t('seconds'),
     ];
 
     return $form;
