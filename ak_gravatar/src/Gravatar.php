@@ -167,6 +167,12 @@ class Gravatar extends AvatarBase implements GravatarInterface {
     if ($pre_hashed && strlen($identifier) > 32) {
       throw new AvatarException('API does not generate unique avatars after 32nd character.');
     }
+
+    // Gravatar expects lower case email address.
+    if (!$pre_hashed) {
+      $identifier = strtolower($identifier);
+    }
+
     return parent::setIdentifier($identifier, $pre_hashed);
   }
 
