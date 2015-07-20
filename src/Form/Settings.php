@@ -73,44 +73,131 @@ class Settings extends ConfigFormBase {
     $form = parent::buildForm($form, $form_state);
     $config = $this->config('ak.settings');
 
-    $avatar_generators_fallback = [
-      '' => $this->t('<em>Use uploaded image</em>'),
+    // Define table.
+    $headers = [
+      'label' => $this->t('Avatar Generator'),
+      'enabled' => [
+        'data' => $this->t('Enabled'),
+        'class' => ['checkbox'],
+      ],
+      'weight' => $this->t('Weight'),
+      'type' => $this->t('Type'),
     ];
-    $avatar_generators = [
-      '' => $this->t('<em>Use fallback</em>'),
+
+    $form['avatar_generators_help'] = [
+      '#prefix' => '<p>',
+      '#markup' => $this->t('A list of avatar generators to try for each user in order of preference.'),
+      '#suffix' => '</p>',
     ];
+    $form['avatar_generators'] = [
+      '#type' => 'table',
+      '#header' => $headers,
+      '#empty' => $this->t('No avatar generators found.'),
+      '#attributes' => array(
+        'id' => 'avatar-generators',
+      ),
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'generator-weight',
+        ],
+      ],
+    ];
+
+    // Add non-fallback generators.
+    $fallback_options = [];
     foreach ($this->avatarGenerator->getDefinitions() as $plugin_id => $definition) {
       if ($plugin_id != 'broken') {
-        $label = $this->t('@label (%dynamic)', [
-          '@label' => $definition['label'],
-          '%dynamic' => $definition['dynamic'] ? $this->t('Dynamic') : $this->t('Static'),
-        ]);
-
-        $avatar_generators[$plugin_id] = $label;
-        if ($definition['fallback']) {
-          $avatar_generators_fallback[$plugin_id] = $label;
+        if (empty($definition['fallback'])) {
+          $row = [];
+          $row['label']['#markup'] = $definition['label'];
+          $row['enabled'] = [];
+          $row['weight'] = [];
+          $row['type']['#markup'] = $definition['dynamic'] ? $this->t('Dynamic') : $this->t('Static');
+          $avatar_generators[$plugin_id] = $row;
+        }
+        else {
+          $fallback_options[$plugin_id] = $definition['label'];
         }
       }
     }
 
-    $form['avatar_generator']['#tree'] = TRUE;
-    $generators = $config->get('avatar_generator');
-    $form['avatar_generator']['default'] = [
-      '#type' => 'radios',
-      '#options' => $avatar_generators,
-      '#title' => $this->t('Default avatar generator'),
-      '#description' => $this->t('Default avatar generator for users with no preference set.'),
-      '#default_value' => $generators['default'],
+    // User preference computed avatar generator.
+    $avatar_generators['_user_preference'] = [
+      'label' => ['#markup' => $this->t('<em>User preference</em>')],
+      'enabled' => [],
+      'weight' => [],
+      'type' => ['#markup' => $this->t('Any')],
     ];
 
-    $form['avatar_generator']['fallback'] = [
-      '#type' => 'radios',
-      '#options' => $avatar_generators_fallback,
-      '#title' => $this->t('Fallback avatar generator'),
-      '#description' => $this->t("Avatar generator to use when the site default or users' preference does not produce an avatar."),
-      // Link to none: admin/config/people/accounts/fields/user.user.user_picture#edit-settings-default-image
-      '#default_value' => $generators['fallback'],
+    // Add fallback generator.
+    $avatar_generators['_fallback'] = [
+      'label' => ['#markup' => 'Final fallback'], //@todo remove
+      'enabled' => [],
+      'weight' => [],
+      'type' => ['#markup' => $this->t('Any')],
     ];
+    $avatar_generators['_fallback']['label'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Final fallback'),
+      '#title_display' => 'invisible',
+      '#description' => $this->t('These avatar generators are guaranteed to produce an avatar. Any avatar generators below this will not run.'),
+      '#options' => $fallback_options,
+    ];
+
+    // Add enabled and weights to all preferences.
+    foreach (Element::children($avatar_generators) as $plugin_id) {
+      $avatar_generators[$plugin_id]['#attributes']['class'][] = 'draggable';
+      $avatar_generators[$plugin_id]['enabled'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enabled'),
+        '#title_display' => 'invisible',
+        '#default_value' => FALSE,
+        '#wrapper_attributes' => [
+          'class' => [
+            'checkbox',
+          ],
+        ]
+      ];
+      $avatar_generators[$plugin_id]['weight'] = [
+        '#type' => 'weight',
+        '#title' => t('Weight for @label', array('@label' => $plugin_id)),
+        '#title_display' => 'invisible',
+        '#default_value' => NULL,
+        '#attributes' => [
+          'class' => ['generator-weight']
+        ]
+      ];
+    }
+
+    // re-sort rows based on config.
+    $i = 0;
+    foreach ($config->get('avatar_generators') as $generator) {
+      if (isset($avatar_generators[$generator])) {
+        $form['avatar_generators'][$generator] = $avatar_generators[$generator];
+        $form['avatar_generators'][$generator]['enabled']['#default_value'] = TRUE;
+        $form['avatar_generators'][$generator]['weight']['#default_value'] = $i;
+        unset($avatar_generators[$generator]);
+      }
+      // could be a fallback.
+      else if (isset($fallback_options[$generator])) {
+        $avatar_generators['_fallback']['label']['#default_value'] = $generator;
+        $form['avatar_generators']['_fallback'] = $avatar_generators['_fallback'];
+        $form['avatar_generators']['_fallback']['enabled']['#default_value'] = TRUE;
+        $form['avatar_generators']['_fallback']['weight']['#default_value'] = $i;
+        unset($avatar_generators['_fallback']);
+      }
+      $i++;
+    }
+
+    // add the rest
+    foreach ($avatar_generators as $plugin_id => $generator) {
+      $form['avatar_generators'][$plugin_id] = $generator;
+      $form['avatar_generators'][$plugin_id]['weight']['#default_value'] = $i;
+      $i++;
+    }
+
 
     $image_styles = [];
     $form['image_style'] = [
@@ -157,29 +244,28 @@ class Settings extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $ak_preview_storage = \Drupal::entityManager()->getStorage('ak_preview');
     $config = $this->config('ak.settings');
+    $generators_original = $config->get('avatar_generators');
 
-    $generators = $form_state->getValue('avatar_generator');
-    $generators_old = $config->get('avatar_generator');
-
-    if ($generators_old['default'] != $generators['default']) {
-      $ids = $ak_preview_storage
-        ->getQuery()
-        ->condition('scope', AvatarPreviewInterface::SCOPE_SITE_DEFAULT, '=')
-        ->execute();
-      $ak_preview_storage->delete($ak_preview_storage->loadMultiple($ids));
+    $generators = [];
+    // Generators are already sorted correctly.
+    foreach ($form_state->getValue('avatar_generators') as $generator_id => $row) {
+      if (!empty($row['enabled'])) {
+        if ($generator_id == '_fallback') {
+          $generator_id = $row['label'];
+        }
+        $generators[] = $generator_id;
+      }
     }
-    if ($generators_old['fallback'] != $generators['fallback']) {
+    $config->set('avatar_generators', $generators);
+
+    // If fallback changed, then purge fallback previews.
+    if ($generators_original != $generators) {
       $ids = $ak_preview_storage
         ->getQuery()
         ->condition('scope', AvatarPreviewInterface::SCOPE_SITE_FALLBACK, '=')
         ->execute();
       $ak_preview_storage->delete($ak_preview_storage->loadMultiple($ids));
     }
-
-    $config->set('avatar_generator', [
-      'default' => $generators['default'],
-      'fallback' => $generators['fallback'],
-    ]);
 
     $intervals = $form_state->getValue('refresh_interval');
     $config->set('refresh_interval', [

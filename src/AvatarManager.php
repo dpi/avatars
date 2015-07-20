@@ -100,7 +100,7 @@ class AvatarManager implements AvatarManagerInterface {
    *   An avatar preview entity.
    */
   function findValidAvatar(UserInterface $user) {
-    foreach ($this->getPreferences($user) as $scope => $avatar_generator) {
+    foreach ($this->getPreferences($user) as $avatar_generator => $scope) {
       if ($this->avatarGenerator->getDefinition($avatar_generator, FALSE)) {
         $this->refreshAvatarGenerator($user, $avatar_generator, $scope);
         if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
@@ -194,34 +194,28 @@ class AvatarManager implements AvatarManagerInterface {
    *   A user entity.
    *
    * @return \Generator
+   *   Generator yield pairs:
+   *   key: string $avatar_generator_machine_name
+   *   value: value of constants prefixed with AvatarPreviewInterface::SCOPE_*
    */
   public function getPreferences(UserInterface $user) {
-    // User preference.
-    $user_preference = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
-    if ($user_preference && $this->avatarGenerator->getDefinition($user_preference, FALSE)) {
-      yield AvatarPreviewInterface::SCOPE_USER_SELECTED => $user_preference;
-    }
-    // User has no preference:
-    else {
-      $generators = $this->configFactory
-        ->get('ak.settings')
-        ->get('avatar_generator');
-      yield AvatarPreviewInterface::SCOPE_SITE_DEFAULT => $generators['default'];
-    }
-    // Site fallback.
-    yield AvatarPreviewInterface::SCOPE_SITE_FALLBACK => $this->getFallbackAvatarGenerator();
-  }
-
-  /**
-   * Get site fallback avatar generator plugin ID.
-   *
-   * @return string
-   */
-  function getFallbackAvatarGenerator() {
     $generators = $this->configFactory
       ->get('ak.settings')
-      ->get('avatar_generator');
-    return $generators['fallback'];
+      ->get('avatar_generators');
+
+    foreach ($generators as $generator) {
+      if ($generator == '_user_preference') {
+        $generator = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
+        $scope = AvatarPreviewInterface::SCOPE_USER_SELECTED;
+      }
+      else {
+        $scope = AvatarPreviewInterface::SCOPE_SITE_FALLBACK;
+      }
+
+      if ($this->avatarGenerator->getDefinition($generator, FALSE)) {
+        yield $generator => $scope;
+      }
+    }
   }
 
   /**

@@ -2,15 +2,12 @@ ak.settings:
   type: mapping
   label: 'Avatar Kit settings'
   mapping:
-    avatar_generator:
-      type: mapping
-      mapping:
-        default:
-          type: string
-          label: 'Default avatar generator'
-        fallback:
-          type: string
-          label: 'Fallback avatar generator'
+    avatar_generators:
+      type: sequence
+      label: 'Enabled avatar generators ordered by preference.'
+      sequence:
+        type: string
+        label: 'Avatar generator machine ID.'
     refresh_interval:
       type: mapping
       mapping:

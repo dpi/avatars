@@ -1,6 +1,6 @@
-avatar_generator:
-  default: 'user'
-  fallback: ''
+avatar_generators:
+  - _user_preference
+  - user
 refresh_interval:
   dynamic: 3600
   static: -1

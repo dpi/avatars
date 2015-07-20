@@ -52,16 +52,6 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
   const SCOPE_USER_SELECTED = 1;
 
   /**
-   * Whether the avatar preview was generated due to no user preference.
-   *
-   * If the site default avatar avatar generator preference changes, all
-   * previews with this scope will be purged immediately.
-   *
-   * @var int
-   */
-  const SCOPE_SITE_DEFAULT = 2;
-
-  /**
    * Whether the avatar preview was generated due to failed first preference.
    *
    * May be user preference or default generator failed.
