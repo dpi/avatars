@@ -274,7 +274,7 @@ class Settings extends ConfigFormBase {
     ]);
     $config->save();
 
-    drupal_set_message(t('Settings saved. You may need to clear cache before avatars tavatarse effect.'));
+    drupal_set_message(t('Settings saved. You may need to clear cache before avatars take effect.'));
   }
 
 }
