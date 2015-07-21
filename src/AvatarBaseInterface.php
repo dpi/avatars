@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarBaseInterface.
+ * Contains \Drupal\avatars\AvatarBaseInterface.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 /**
  * Interface for Avatar APIs.
@@ -26,7 +26,7 @@ interface AvatarBaseInterface {
    * @param string|NULL $hostname
    *   A host name, or NULL to reset to default.
    *
-   * @return \Drupal\ak\AvatarBaseInterface
+   * @return \Drupal\avatars\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    */
   public function setHostName($hostname = NULL);
@@ -48,10 +48,10 @@ interface AvatarBaseInterface {
    *   Whether the ID has been pre-obfuscated, otherwise it will happen when the
    *   URL is generated.
    *
-   * @throws \Drupal\ak\Exception\AvatarException
+   * @throws \Drupal\avatars\Exception\AvatarException
    *   Thrown if the identifier is malformed.
    *
-   * @return \Drupal\ak\AvatarBaseInterface
+   * @return \Drupal\avatars\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    */
   public function setIdentifier($identifier, $pre_hashed = FALSE);
@@ -83,13 +83,13 @@ interface AvatarBaseInterface {
    * @param string $type
    *   The avatar type.
    *
-   * @throws \Drupal\ak\Exception\AvatarException
+   * @throws \Drupal\avatars\Exception\AvatarException
    *   Thrown if this the type is not defined.
    *
-   * @return \Drupal\ak\AvatarBaseInterface
+   * @return \Drupal\avatars\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    *
-   * @see \Drupal\ak\AvatarBaseInterface::getTypes()
+   * @see \Drupal\avatars\AvatarBaseInterface::getTypes()
    */
   public function setType($type);
 
@@ -101,10 +101,10 @@ interface AvatarBaseInterface {
    * @param int|NULL $height
    *   The height of the avatar, or NULL to mirror value for width.
    *
-   * @throws \Drupal\ak\Exception\AvatarException
+   * @throws \Drupal\avatars\Exception\AvatarException
    *   Thrown if the passed dimensions are invalid.
    *
-   * @return \Drupal\ak\AvatarBaseInterface
+   * @return \Drupal\avatars\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    */
   public function setDimensions($width, $height = NULL);
@@ -123,10 +123,10 @@ interface AvatarBaseInterface {
    * @param bool $secure_request
    *   If the request should be secure.
    *
-   * @throws \Drupal\ak\Exception\AvatarException
+   * @throws \Drupal\avatars\Exception\AvatarException
    *   Thrown if API does not support the requested secure state.
    *
-   * @return \Drupal\ak\AvatarBaseInterface
+   * @return \Drupal\avatars\AvatarBaseInterface
    *   Returns the called Robohash object for chaining.
    */
   public function setIsSecure($secure_request = TRUE);
@@ -145,7 +145,7 @@ interface AvatarBaseInterface {
   /**
    * Gets the URL for the avatar.
    *
-   * @throws \Drupal\ak\Exception\AvatarException
+   * @throws \Drupal\avatars\Exception\AvatarException
    *   Thrown if missing parameters.
    *
    * @return string

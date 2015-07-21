@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Form\Settings.
+ * Contains \Drupal\avatars\Form\Settings.
  */
 
-namespace Drupal\ak\Form;
+namespace Drupal\avatars\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\ak\AvatarGeneratorPluginManagerInterface;
+use Drupal\avatars\AvatarGeneratorPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\ak\AvatarPreviewInterface;
+use Drupal\avatars\AvatarPreviewInterface;
 
 /**
  * Configure avatar kit settings.
@@ -23,7 +23,7 @@ class Settings extends ConfigFormBase {
   /**
    * The avatar generator plugin manager.
    *
-   * @var \Drupal\ak\AvatarGeneratorPluginManagerInterface
+   * @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface
    */
   protected $avatarGenerator;
 
@@ -32,7 +32,7 @@ class Settings extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\ak\AvatarGeneratorPluginManagerInterface $avatar_generator
+   * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
   public function __construct(ConfigFactoryInterface $config_factory, AvatarGeneratorPluginManagerInterface $avatar_generator) {
@@ -54,7 +54,7 @@ class Settings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'ak_settings';
+    return 'avatars_settings';
   }
 
   /**
@@ -62,7 +62,7 @@ class Settings extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'ak.settings',
+      'avatars.settings',
     ];
   }
 
@@ -71,7 +71,7 @@ class Settings extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
-    $config = $this->config('ak.settings');
+    $config = $this->config('avatars.settings');
 
     // Define table.
     $headers = [
@@ -242,8 +242,8 @@ class Settings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $ak_preview_storage = \Drupal::entityManager()->getStorage('ak_preview');
-    $config = $this->config('ak.settings');
+    $avatars_preview_storage = \Drupal::entityManager()->getStorage('avatars_preview');
+    $config = $this->config('avatars.settings');
     $generators_original = $config->get('avatar_generators');
 
     $generators = [];
@@ -260,11 +260,11 @@ class Settings extends ConfigFormBase {
 
     // If fallback changed, then purge fallback previews.
     if ($generators_original != $generators) {
-      $ids = $ak_preview_storage
+      $ids = $avatars_preview_storage
         ->getQuery()
         ->condition('scope', AvatarPreviewInterface::SCOPE_SITE_FALLBACK, '=')
         ->execute();
-      $ak_preview_storage->delete($ak_preview_storage->loadMultiple($ids));
+      $avatars_preview_storage->delete($avatars_preview_storage->loadMultiple($ids));
     }
 
     $intervals = $form_state->getValue('refresh_interval');
@@ -274,7 +274,7 @@ class Settings extends ConfigFormBase {
     ]);
     $config->save();
 
-    drupal_set_message(t('Settings saved. You may need to clear cache before avatars take effect.'));
+    drupal_set_message(t('Settings saved. You may need to clear cache before avatars tavatarse effect.'));
   }
 
 }

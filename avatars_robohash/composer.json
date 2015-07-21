@@ -1,0 +1,16 @@
+{
+  "name": "drupal/avatars_robohash",
+  "description": "Integration with Robohash",
+  "type": "drupal-module",
+  "homepage": "http://drupal.org/project/avatars",
+  "authors": [
+    {
+      "name": "Daniel Phin",
+      "email": "pro@danielph.in",
+      "homepage": "http://danielph.in",
+      "role": "Maintainer"
+    }
+  ],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev"
+}

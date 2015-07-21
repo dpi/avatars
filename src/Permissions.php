@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Permissions.
+ * Contains \Drupal\avatars\Permissions.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -21,14 +21,14 @@ class Permissions implements ContainerInjectionInterface {
   /**
    * The avatar generator plugin manager.
    *
-   * @var \Drupal\ak\AvatarGeneratorPluginManagerInterface
+   * @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface
    */
   protected $avatarGenerator;
 
   /**
    * Constructs the permission generator.
    *
-   * @param \Drupal\ak\AvatarGeneratorPluginManagerInterface $avatar_generator
+   * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
   public function __construct(AvatarGeneratorPluginManagerInterface $avatar_generator) {
@@ -63,7 +63,7 @@ class Permissions implements ContainerInjectionInterface {
         '%provider' => $definition['provider'],
       ];
 
-      $permissions["ak avatar_generator user $plugin_id"] = [
+      $permissions["avatars avatar_generator user $plugin_id"] = [
         'title' => $this->t('Use %avatar_generator by %provider', $t_args),
         'description' => $this->t('User can select %avatar_generator avatar generator.', $t_args),
       ];

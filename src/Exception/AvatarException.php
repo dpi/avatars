@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Exception\AvatarException.
+ * Contains \Drupal\avatars\Exception\AvatarException.
  */
 
-namespace Drupal\ak\Exception;
+namespace Drupal\avatars\Exception;
 
 /**
  * Defines an exception for Avatars.

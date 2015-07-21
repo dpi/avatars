@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarManager.
+ * Contains \Drupal\avatars\AvatarManager.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Drupal\ak\Entity\AvatarPreview;
+use Drupal\avatars\Entity\AvatarPreview;
 use Drupal\user\UserInterface;
 use Drupal\file\FileInterface;
 
@@ -40,7 +40,7 @@ class AvatarManager implements AvatarManagerInterface {
   /**
    * The avatar generator plugin manager.
    *
-   * @var \Drupal\ak\AvatarGeneratorPluginManagerInterface
+   * @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface
    */
   protected $avatarGenerator;
 
@@ -51,7 +51,7 @@ class AvatarManager implements AvatarManagerInterface {
    *   The config factory service.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tag_invalidator
    *   The cache tag invalidator.
-   * @param \Drupal\ak\AvatarGeneratorPluginManagerInterface $avatar_generator
+   * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
   function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, AvatarGeneratorPluginManagerInterface $avatar_generator) {
@@ -96,7 +96,7 @@ class AvatarManager implements AvatarManagerInterface {
    * @param \Drupal\user\UserInterface
    *   A user entity.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface|NULL
+   * @return \Drupal\avatars\AvatarPreviewInterface|NULL
    *   An avatar preview entity.
    */
   function findValidAvatar(UserInterface $user) {
@@ -123,7 +123,7 @@ class AvatarManager implements AvatarManagerInterface {
    * @param int $scope
    *   Scope level.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   An avatar preview entity.
    */
   public function refreshAvatarGenerator(UserInterface $user, $avatar_generator, $scope) {
@@ -160,7 +160,7 @@ class AvatarManager implements AvatarManagerInterface {
    * @return \Drupal\file\FileInterface|NULL
    */
   function getAvatarFile($avatar_generator, UserInterface $user) {
-    /** @var \Drupal\ak\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface $plugin */
+    /** @var \Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface $plugin */
     $plugin = $this->avatarGenerator->createInstance($avatar_generator);
 
     // Get avatar if it is already local.
@@ -200,7 +200,7 @@ class AvatarManager implements AvatarManagerInterface {
    */
   public function getPreferences(UserInterface $user) {
     $generators = $this->configFactory
-      ->get('ak.settings')
+      ->get('avatars.settings')
       ->get('avatar_generators');
 
     foreach ($generators as $generator) {

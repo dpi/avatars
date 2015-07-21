@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Annotation\AvatarGenerator.
+ * Contains \Drupal\avatars\Annotation\AvatarGenerator.
  */
 
-namespace Drupal\ak\Annotation;
+namespace Drupal\avatars\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
 

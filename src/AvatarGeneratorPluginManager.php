@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarGeneratorPluginManager.
+ * Contains \Drupal\avatars\AvatarGeneratorPluginManager.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -21,7 +21,7 @@ class AvatarGeneratorPluginManager extends DefaultPluginManager implements Avata
    * Constructs a new avatar generator plugin manager.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/AvatarGenerator', $namespaces, $module_handler, 'Drupal\ak\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface', 'Drupal\ak\Annotation\AvatarGenerator');
+    parent::__construct('Plugin/AvatarGenerator', $namespaces, $module_handler, 'Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface', 'Drupal\avatars\Annotation\AvatarGenerator');
     $this->alterInfo('avatar_generator_info');
     $this->setCacheBackend($cache_backend, 'avatar_generator_info_plugins');
   }

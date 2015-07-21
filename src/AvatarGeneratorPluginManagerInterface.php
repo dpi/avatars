@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarGeneratorPluginManagerInterface.
+ * Contains \Drupal\avatars\AvatarGeneratorPluginManagerInterface.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 

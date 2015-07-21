@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Entity\AvatarPreview.
+ * Contains \Drupal\avatars\Entity\AvatarPreview.
  */
 
-namespace Drupal\ak\Entity;
+namespace Drupal\avatars\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\ak\AvatarPreviewInterface;
+use Drupal\avatars\AvatarPreviewInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\file\FileInterface;
@@ -19,9 +19,9 @@ use Drupal\user\UserInterface;
  * Defines the avatar preview entity.
  *
  * @ContentEntityType(
- *   id = "ak_preview",
+ *   id = "avatars_preview",
  *   label = @Translation("Avatar preview"),
- *   base_table = "ak_preview",
+ *   base_table = "avatars_preview",
  *   entity_keys = {
  *     "id" = "id"
  *   }
@@ -109,7 +109,7 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
    * {@inheritdoc}
    */
   public static function getAvatarPreview($avatar_generator, UserInterface $user) {
-    $entities = \Drupal::entityManager()->getStorage('ak_preview')
+    $entities = \Drupal::entityManager()->getStorage('avatars_preview')
       ->loadByProperties([
         'avatar_generator' => $avatar_generator,
         'uid' => $user->id(),
@@ -172,7 +172,7 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
     if (!$update && $this->getAvatar()) {
       /** @var \Drupal\file\FileUsage\FileUsageInterface $file_usage */
       $file_usage = \Drupal::service('file.usage')
-        ->add($this->getAvatar(), 'ak', $this->getEntityTypeId(), $this->id());
+        ->add($this->getAvatar(), 'avatars', $this->getEntityTypeId(), $this->id());
     }
   }
 
@@ -195,7 +195,7 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
         \Drupal::service('cache_tags.invalidator')->invalidateTags(
           $avatar_preview->getAvatar()->getCacheTags()
         );
-        $file_usage->delete($avatar_preview->getAvatar(), 'ak', $avatar_preview->getEntityTypeId(), $avatar_preview->id(), 0);
+        $file_usage->delete($avatar_preview->getAvatar(), 'avatars', $avatar_preview->getEntityTypeId(), $avatar_preview->id(), 0);
       }
     }
   }

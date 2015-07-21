@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\Plugin\AvatarGenerator\AvatarGeneratorBase.
+ * Contains \Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorBase.
  */
 
-namespace Drupal\ak\Plugin\AvatarGenerator;
+namespace Drupal\avatars\Plugin\AvatarGenerator;
 
 use Drupal\Core\Session\AccountInterface;
 

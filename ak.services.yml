@@ -1,8 +1,0 @@
-services:
-  ak.avatar_manager:
-    class: Drupal\ak\AvatarManager
-    arguments: ['@config.factory', '@cache_tags.invalidator', '@plugin.manager.avatar_generator']
-    parent: container.trait
-  plugin.manager.avatar_generator:
-    class: Drupal\ak\AvatarGeneratorPluginManager
-    parent: default_plugin_manager

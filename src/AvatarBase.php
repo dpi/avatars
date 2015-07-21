@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarBase.
+ * Contains \Drupal\avatars\AvatarBase.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
-use Drupal\ak\Exception\AvatarException;
+use Drupal\avatars\Exception\AvatarException;
 
 /**
  * Abstract class for Avatar APIs.

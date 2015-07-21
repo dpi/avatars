@@ -1,8 +1,0 @@
-name: Gravatar
-type: module
-description: 'Adds Gravatar.com avatar generators for Avatar Kit.'
-package: AK
-core: 8.x
-dependencies:
-  - composer_manager
-  - ak

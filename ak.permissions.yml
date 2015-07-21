@@ -1,7 +1,0 @@
-administer ak:
-  title: 'Administer Avatar Kit.'
-  description: 'Manage settings for Avatar Kit.'
-  restrict access: TRUE
-
-permission_callbacks:
-  - \Drupal\ak\Permissions::avatarGenerators

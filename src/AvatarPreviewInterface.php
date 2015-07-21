@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarPreviewInterface.
+ * Contains \Drupal\avatars\AvatarPreviewInterface.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\file\FileInterface;
@@ -29,7 +29,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * If a preference on any of these levels changes, then the avatar preview
    * will be expired.
    *
-   * @see \Drupal\ak\AvatarManager::syncAvatar
+   * @see \Drupal\avatars\AvatarManager::syncAvatar
    */
 
   /**
@@ -37,7 +37,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    *
    * @var int
    *
-   * @see ak_cron().
+   * @see avatars_cron().
    */
   const SCOPE_TEMPORARY = 0;
 
@@ -77,7 +77,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @param string $avatar_generator
    *   An avatar generator plugin ID.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
   public function setAvatarGenerator($avatar_generator);
@@ -96,7 +96,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @param \Drupal\user\UserInterface $user
    *   A user entity.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
   public function setUser(UserInterface $user);
@@ -115,7 +115,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @param \Drupal\file\FileInterface|NULL $file
    *   A file entity, or NULL if the generator did not create an avatar.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
   public function setAvatar(FileInterface $file = NULL);
@@ -134,7 +134,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @param int $timestamp
    *   Timestamp of the creation date.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
   public function setCreatedTime($timestamp);
@@ -143,7 +143,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * Gets the scope of the avatar preview.
    *
    * @return int
-   *   Value of a \Drupal\ak\AvatarPreviewInterface::SCOPE_* constant.
+   *   Value of a \Drupal\avatars\AvatarPreviewInterface::SCOPE_* constant.
    */
   public function getScope();
 
@@ -151,9 +151,9 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * Sets the scope of the avatar preview.
    *
    * @param int $scope
-   *   Value of a \Drupal\ak\AvatarPreviewInterface::SCOPE_* constant.
+   *   Value of a \Drupal\avatars\AvatarPreviewInterface::SCOPE_* constant.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
   public function setScope($scope);
@@ -166,7 +166,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @param \Drupal\user\UserInterface $user
    *   A user entity.
    *
-   * @return \Drupal\ak\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface
    *   An avatar preview entity.
    */
   public static function getAvatarPreview($avatar_generator, UserInterface $user);

@@ -1,0 +1,19 @@
+avatars.settings:
+  type: mapping
+  label: 'Avatar Kit settings'
+  mapping:
+    avatar_generators:
+      type: sequence
+      label: 'Enabled avatar generators ordered by preference.'
+      sequence:
+        type: string
+        label: 'Avatar generator machine ID.'
+    refresh_interval:
+      type: mapping
+      mapping:
+        dynamic:
+          type: integer
+          label: 'How long should dynamic avatars be cached before allowing refresh.'
+        static:
+          type: integer
+          label: 'How long should non-preferred static avatars be cached. Leave empty to never delete. Preferred static avatars never expire.'

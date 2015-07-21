@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ak\AvatarManagerInterface.
+ * Contains \Drupal\avatars\AvatarManagerInterface.
  */
 
-namespace Drupal\ak;
+namespace Drupal\avatars;
 
 /**
  * Provides an interface to the avatar manager service.
