@@ -31,7 +31,7 @@ class Adorable extends AvatarGeneratorBase {
   public function generateUri(AccountInterface $account) {
     $api = new AdorableAPI();
     return $api
-      ->setIdentifier($account->getEmail())
+      ->setIdentifier($this->getIdentifier($account))
       ->setDimensions(256)
       ->getUrl();
   }

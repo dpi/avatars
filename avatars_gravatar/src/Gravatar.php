@@ -193,7 +193,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
     $url = ($this->isSecure() ? 'https://' : 'http://') . $this->getHostName() . '/avatar/';
 
     $identifier = $this->getIdentifier();
-    if (empty($identifier)) {
+    if (!strlen($identifier)) {
       throw new AvatarException('Missing avatar identifier/hash');
     }
 

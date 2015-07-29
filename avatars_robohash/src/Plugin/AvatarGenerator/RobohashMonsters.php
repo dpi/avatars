@@ -31,7 +31,7 @@ class RobohashMonsters extends AvatarGeneratorBase {
   public function generateUri(AccountInterface $account) {
     $robohash = new RobohashAPI();
     return $robohash
-      ->setIdentifier($account->getEmail())
+      ->setIdentifier($this->getIdentifier($account))
       ->setType('monster')
       ->getUrl();
   }

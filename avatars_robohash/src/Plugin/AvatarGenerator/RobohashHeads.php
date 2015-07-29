@@ -31,7 +31,7 @@ class RobohashHeads extends AvatarGeneratorBase {
   public function generateUri(AccountInterface $account) {
     $robohash = new RobohashAPI();
     return $robohash
-      ->setIdentifier($account->getEmail())
+      ->setIdentifier($this->getIdentifier($account))
       ->setType('robot_head')
       ->getUrl();
   }

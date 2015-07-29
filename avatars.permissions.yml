@@ -1,5 +1,5 @@
 administer avatars:
-  title: 'Administer Avatar Kit.'
+  title: 'Administer Avatar Kit'
   description: 'Manage settings for Avatar Kit.'
   restrict access: TRUE
 

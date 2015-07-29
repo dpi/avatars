@@ -31,7 +31,7 @@ class Gravatar extends AvatarGeneratorBase {
   public function generateUri(AccountInterface $account) {
     $gravatar = new GravatarAPI();
     return $gravatar
-      ->setIdentifier($account->getEmail())
+      ->setIdentifier($this->getIdentifier($account))
       ->setType('gravatar')
       ->setFallbackType('404')
       ->setDimensions(256)

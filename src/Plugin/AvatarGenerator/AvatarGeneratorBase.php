@@ -15,6 +15,15 @@ use Drupal\Core\Session\AccountInterface;
 abstract class AvatarGeneratorBase implements AvatarGeneratorPluginInterface {
 
   /**
+   * Generate a unique identifier for an account.
+   *
+   * return string
+   */
+  protected function getIdentifier(AccountInterface $account) {
+    return !empty($account->getEmail()) ? $account->getEmail() : (string) $account->id();
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getFile(AccountInterface $account) {

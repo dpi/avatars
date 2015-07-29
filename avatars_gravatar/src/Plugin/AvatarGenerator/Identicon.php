@@ -31,7 +31,7 @@ class Identicon extends AvatarGeneratorBase {
   public function generateUri(AccountInterface $account) {
     $gravatar = new GravatarAPI();
     return $gravatar
-      ->setIdentifier($account->getEmail())
+      ->setIdentifier($this->getIdentifier($account))
       ->setType('identicon')
       ->setDimensions(256)
       ->getUrl();
