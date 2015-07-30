@@ -86,7 +86,7 @@ function avatars_entity_field_access($operation, FieldDefinitionInterface $field
  * Implements hook_entity_presave().
  */
 function avatars_entity_presave(EntityInterface $entity) {
-  if ($entity instanceof UserInterface) {
+  if ($entity instanceof UserInterface && !$entity->isNew()) {
     /** @var \Drupal\avatars\AvatarManager $avatar_manager */
     $avatar_manager = \Drupal::service('avatars.avatar_manager');
     $avatar_manager->invalidateUserAvatar($entity);
