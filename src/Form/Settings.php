@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\avatars\AvatarPreviewInterface;
+use Drupal\unlimited_number\Element\UnlimitedNumber;
 
 /**
  * Configure avatar kit settings.
@@ -226,13 +227,17 @@ class Settings extends ConfigFormBase {
      * Expire unused static avatars (will use up more network bandwidth)
      * */
     $form['refresh_interval']['static'] = [
-      '#type' => 'number',
+      '#type' => 'unlimited_number',
       '#title' => $this->t('Static lifetime'),
-      '#description' => $this->t('How long static avatars are cached. Leave empty to never delete. Only applies to avatars which are not the users preference.'),
-      '#default_value' => $intervals['static'],
+      '#description' => $this->t('How long static avatars are cached. Only applies to avatars which are not the users preference.'),
+      '#default_value' => $intervals['static'] < 1 ? UnlimitedNumber::UNLIMITED : $intervals['static'],
       '#step' => 60,
-      '#min' => -1,
+      '#min' => 60,
       '#field_suffix' => $this->t('seconds'),
+      '#options' => [
+        'unlimited' => $this->t('Never delete'),
+        'limited' => $this->t('Delete after'),
+      ],
     ];
 
     return $form;
@@ -268,6 +273,10 @@ class Settings extends ConfigFormBase {
     }
 
     $intervals = $form_state->getValue('refresh_interval');
+    if ($intervals['static'] == UnlimitedNumber::UNLIMITED) {
+      $intervals['static'] = 0;
+    }
+
     $config->set('refresh_interval', [
       'dynamic' => $intervals['dynamic'],
       'static' => $intervals['static'],

@@ -8,3 +8,4 @@ dependencies:
   - file
   - field
   - options
+  - unlimited_number
