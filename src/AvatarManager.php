@@ -212,9 +212,7 @@ class AvatarManager implements AvatarManagerInterface {
         $scope = AvatarPreviewInterface::SCOPE_SITE_FALLBACK;
       }
 
-      if ($this->avatarGenerator->getDefinition($generator, FALSE)) {
-        yield $generator => $scope;
-      }
+      yield $generator => $scope;
     }
   }
 
