@@ -64,7 +64,7 @@ class Adorable extends AvatarBase implements AdorableInterface {
     }
 
     $identifier = $this->getIdentifier();
-    if (empty($identifier)) {
+    if (!strlen($identifier)) {
       throw new AvatarException('Missing avatar identifier/hash');
     }
 
