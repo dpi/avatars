@@ -96,9 +96,10 @@ class Gravatar extends AvatarBase implements GravatarInterface {
    * {@inheritdoc}
    */
   static public function getFallbackTypes() {
-    return array_diff(array_keys(Gravatar::getTypesMap()), [
-      'gravatar',
-    ]);
+    return array_diff(
+      array_keys(Gravatar::getTypesMap()),
+      ['gravatar']
+    );
   }
 
   /**
