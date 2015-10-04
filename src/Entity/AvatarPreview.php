@@ -55,7 +55,7 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
    * {@inheritdoc}
    */
   public function setUser(UserInterface $user) {
-    $this->set('uid', array('entity' => $user));
+    $this->set('uid', ['entity' => $user]);
     return $this;
   }
 
@@ -70,7 +70,7 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
    * {@inheritdoc}
    */
   public function setAvatar(FileInterface $file = NULL) {
-    $this->set('avatar', array('entity' => $file));
+    $this->set('avatar', ['entity' => $file]);
     // @todo: change usage on save.
     return $this;
   }

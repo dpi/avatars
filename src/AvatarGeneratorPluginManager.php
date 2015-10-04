@@ -29,7 +29,7 @@ class AvatarGeneratorPluginManager extends DefaultPluginManager implements Avata
   /**
    * {@inheritdoc}
    */
-  public function getFallbackPluginId($plugin_id, array $configuration = array()) {
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
     return 'broken';
   }
 

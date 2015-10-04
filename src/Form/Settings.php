@@ -94,9 +94,9 @@ class Settings extends ConfigFormBase {
       '#type' => 'table',
       '#header' => $headers,
       '#empty' => $this->t('No avatar generators found.'),
-      '#attributes' => array(
+      '#attributes' => [
         'id' => 'avatar-generators',
-      ),
+      ],
       '#tabledrag' => [
         [
           'action' => 'order',
@@ -163,7 +163,7 @@ class Settings extends ConfigFormBase {
       ];
       $avatar_generators[$plugin_id]['weight'] = [
         '#type' => 'weight',
-        '#title' => t('Weight for @label', array('@label' => $plugin_id)),
+        '#title' => t('Weight for @label', ['@label' => $plugin_id]),
         '#title_display' => 'invisible',
         '#default_value' => NULL,
         '#attributes' => [
