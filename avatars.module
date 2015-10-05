@@ -96,6 +96,27 @@ function avatars_entity_presave(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_storage_load().
+ */
+function avatars_file_storage_load(array $entities) {
+  /** @var $entities \Drupal\file\FileInterface[] */
+  $avatar_preview_storage = \Drupal::entityManager()
+    ->getStorage('avatars_preview');
+
+  // Add cache tags to avatar preview files. These tags will be added when image
+  // formatters are rendered.
+  foreach ($entities as $file) {
+    $avatar_previews = $avatar_preview_storage->loadByProperties([
+      'avatar' => $file->id(),
+    ]);
+    if ($avatar_preview = reset($avatar_previews)) {
+      /** @var AvatarPreviewInterface $avatar_preview */
+      $file->addCacheTags(['avatar_preview']);
+    }
+  }
+}
+
+/**
  * To be consumed by field AK_FIELD_AVATAR_GENERATOR allowed_values_function.
  *
  * Implements callback_allowed_values_function().

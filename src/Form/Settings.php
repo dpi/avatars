@@ -15,6 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\avatars\AvatarPreviewInterface;
 use Drupal\unlimited_number\Element\UnlimitedNumber;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Configure avatar kit settings.
@@ -265,6 +266,7 @@ class Settings extends ConfigFormBase {
 
     // If fallback changed, then purge fallback previews.
     if ($generators_original != $generators) {
+      Cache::invalidateTags('avatar_preview');
       $ids = $avatars_preview_storage
         ->getQuery()
         ->condition('scope', AvatarPreviewInterface::SCOPE_SITE_FALLBACK, '=')
@@ -283,7 +285,7 @@ class Settings extends ConfigFormBase {
     ]);
     $config->save();
 
-    drupal_set_message(t('Settings saved. You may need to clear cache before avatars take effect.'));
+    drupal_set_message(t('Settings saved.'));
   }
 
 }
