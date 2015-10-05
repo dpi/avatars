@@ -266,7 +266,7 @@ class Settings extends ConfigFormBase {
 
     // If fallback changed, then purge fallback previews.
     if ($generators_original != $generators) {
-      Cache::invalidateTags('avatar_preview');
+      Cache::invalidateTags(['avatar_preview']);
       $ids = $avatars_preview_storage
         ->getQuery()
         ->condition('scope', AvatarPreviewInterface::SCOPE_SITE_FALLBACK, '=')
