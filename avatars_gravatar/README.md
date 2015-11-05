@@ -17,15 +17,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-# Installation
-
- 1. Enable this module in Drupal
- 2. Run `composer drupal-update` from the core/ directory.
-    If your terminal complains that it is unaware of the `composer` command, you
-    must install Composer: https://getcomposer.org/download/
-
-# Composer
-
-Composer is required as it is likely the bundled avatar generator APIs will be
-forked to a separate project

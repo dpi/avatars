@@ -12,8 +12,5 @@
     }
   ],
   "license": "GPL-2.0+",
-  "minimum-stability": "dev",
-  "require": {
-    "guzzlehttp/guzzle": "~5.0"
-  }
+  "minimum-stability": "dev"
 }
