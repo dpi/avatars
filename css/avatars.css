@@ -1,0 +1,22 @@
+/**
+ * @file
+ * Visual styles for `avatars_image_radios` element.
+ */
+.avatar_preview_radios .form-radios {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.avatar_preview_radios .form-radios > .avatar_preview_radio {
+  margin: 0.5em;
+  padding: 1em;
+  box-sizing: border-box;
+  border: 1px solid #eee;
+}
+.avatar_preview_radios .form-radios > .avatar_preview_radio img {
+   border: 1px solid #eee;
+ }
+.avatar_preview_radios .form-radios > .avatar_preview_radio.avatar_preview_radio___none {
+  width: 100%;
+}

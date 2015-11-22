@@ -11,7 +11,7 @@ dependencies:
     - options
     - avatars
 label: 'Avatar Generator'
-description: 'Select source of avatar. Or choose `None` to use site default.'
+description: 'Select source of avatar.'
 required: false
 translatable: true
 settings: {  }

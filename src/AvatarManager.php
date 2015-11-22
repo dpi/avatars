@@ -77,19 +77,6 @@ class AvatarManager implements AvatarManagerInterface {
   }
 
   /**
-   * Downloads all avatar previews for a user.
-   *
-   * @param \Drupal\user\UserInterface
-   *   A user entity.
-   */
-  function refreshAllAvatars(UserInterface $user) {
-    $definitions = $this->avatarGenerator->getDefinitions();
-    foreach (array_keys($definitions) as $avatar_generator) {
-      $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
-    }
-  }
-
-  /**
    * Go down the the avatar generator preference hierarchy for a user, loading
    * each avatar until a valid avatar is found.
    *
@@ -137,7 +124,7 @@ class AvatarManager implements AvatarManagerInterface {
     else {
       $file = $this->getAvatarFile($avatar_generator, $user);
       $avatar_preview = AvatarPreview::create()
-        ->setAvatarGenerator($avatar_generator)
+        ->setAvatarGeneratorId($avatar_generator)
         ->setAvatar($file instanceof FileInterface ? $file : NULL)
         ->setUser($user)
         ->setScope($scope);
@@ -148,9 +135,28 @@ class AvatarManager implements AvatarManagerInterface {
   }
 
   /**
+   * Downloads all avatar previews for a user.
+   *
+   * @param \Drupal\user\UserInterface
+   *   A user entity.
+   *
+   * @return \Drupal\avatars\AvatarPreviewInterface[]
+   *   An array of refreshed avatar preview entities.
+   */
+  function refreshAllAvatars(UserInterface $user) {
+    $previews = [];
+    $definitions = $this->avatarGenerator->getDefinitions();
+    foreach (array_keys($definitions) as $avatar_generator) {
+      $previews[] = $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
+    }
+    return $previews;
+  }
+
+  /**
    * Download avatar and insert it into a file.
    *
-   * Ignores any existing caches.
+   * Ignores any existing caches. Use refreshAvatarGenerator to take advantage
+   * of internal caching.
    *
    * @param string $avatar_generator
    *   The avatar generator plugin ID.

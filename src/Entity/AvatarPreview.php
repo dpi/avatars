@@ -32,14 +32,14 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
   /**
    * {@inheritdoc}
    */
-  public function getAvatarGenerator() {
+  public function getAvatarGeneratorId() {
     return $this->get('avatar_generator')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setAvatarGenerator($avatar_generator) {
+  public function setAvatarGeneratorId($avatar_generator) {
     $this->set('avatar_generator', $avatar_generator);
     return $this;
   }

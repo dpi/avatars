@@ -69,7 +69,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return string
    *   An avatar generator plugin ID.
    */
-  public function getAvatarGenerator();
+  public function getAvatarGeneratorId();
 
   /**
    * Set avatar generator plugin ID.
@@ -80,7 +80,7 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
    * @return \Drupal\avatars\AvatarPreviewInterface
    *   Return avatar preview for chaining.
    */
-  public function setAvatarGenerator($avatar_generator);
+  public function setAvatarGeneratorId($avatar_generator);
 
   /**
    * Get associated user.
