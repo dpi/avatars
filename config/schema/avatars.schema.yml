@@ -17,3 +17,11 @@ avatars.settings:
         static:
           type: integer
           label: 'How long should non-preferred static avatars be cached. Leave empty to never delete. Preferred static avatars never expire.'
+
+field.widget.settings.avatars_generator_preview:
+  type: mapping
+  label: 'Avatar generator preview settings'
+  mapping:
+    preview_image_style:
+      type: string
+      label: 'Preview image style'
