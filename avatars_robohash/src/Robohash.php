@@ -120,7 +120,7 @@ class Robohash extends AvatarBase implements RobohashInterface {
     $url = ($this->isSecure() ? 'https://' : 'http://') . $this->getHostName() . '/';
 
     $identifier = $this->getIdentifier();
-    if (empty($identifier)) {
+    if (!strlen($identifier)) {
       throw new AvatarException('Robohash missing identifier/hash');
     }
 
