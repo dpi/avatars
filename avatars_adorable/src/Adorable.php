@@ -68,7 +68,7 @@ class Adorable extends AvatarBase implements AdorableInterface {
       throw new AvatarException('Missing avatar identifier/hash');
     }
 
-    $url .= !$this->identifierIsPreHashed() ? $this->hashIdentifier($identifier) : $url;
+    $url .= $this->identifierIsPreHashed() ? $identifier : $this->hashIdentifier($identifier);
 
     return $url;
   }

@@ -198,7 +198,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
       throw new AvatarException('Missing avatar identifier/hash');
     }
 
-    $url .= !$this->identifierIsPreHashed() ? $this->hashIdentifier($identifier) : $url;
+    $url .= $this->identifierIsPreHashed() ? $identifier : $this->hashIdentifier($identifier);
 
     $type = $this->getType();
     if (!in_array($type, $this->getFallbackTypes())) {

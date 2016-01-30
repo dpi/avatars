@@ -124,7 +124,7 @@ class Robohash extends AvatarBase implements RobohashInterface {
       throw new AvatarException('Robohash missing identifier/hash');
     }
 
-    $url .= !$this->identifierIsPreHashed() ? $this->hashIdentifier($identifier) : $url;
+    $url .= $this->identifierIsPreHashed() ? $identifier : $this->hashIdentifier($identifier);
 
     $background = $this->getBackground();
     $background_map = $this->getBackgroundsMap();
