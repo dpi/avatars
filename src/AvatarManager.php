@@ -8,10 +8,11 @@
 namespace Drupal\avatars;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Drupal\avatars\Entity\AvatarPreview;
 use Drupal\user\UserInterface;
 use Drupal\file\FileInterface;
@@ -22,6 +23,7 @@ use Drupal\file\FileInterface;
 class AvatarManager implements AvatarManagerInterface {
 
   use ContainerAwareTrait;
+  use StringTranslationTrait;
 
   /**
    * The config factory service.
@@ -38,6 +40,13 @@ class AvatarManager implements AvatarManagerInterface {
   protected $cacheTagInvalidator;
 
   /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * The avatar generator plugin manager.
    *
    * @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface
@@ -51,12 +60,15 @@ class AvatarManager implements AvatarManagerInterface {
    *   The config factory service.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tag_invalidator
    *   The cache tag invalidator.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger channel factory.
    * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
-  function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, AvatarGeneratorPluginManagerInterface $avatar_generator) {
+  function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory,  AvatarGeneratorPluginManagerInterface $avatar_generator) {
     $this->configFactory = $config_factory;
     $this->cacheTagInvalidator = $cache_tag_invalidator;
+    $this->loggerFactory = $logger_factory;
     $this->avatarGenerator = $avatar_generator;
   }
 
@@ -163,7 +175,7 @@ class AvatarManager implements AvatarManagerInterface {
    * @param \Drupal\user\UserInterface
    *   A user entity.
    *
-   * @return \Drupal\file\FileInterface|NULL
+   * @return \Drupal\file\FileInterface|FALSE
    */
   function getAvatarFile($avatar_generator, UserInterface $user) {
     /** @var \Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface $plugin */
@@ -183,7 +195,15 @@ class AvatarManager implements AvatarManagerInterface {
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }
         }
-        catch (ClientException $e) {
+        catch (\Exception $e) {
+          $this->loggerFactory
+            ->get('avatars')
+            ->error($this->t('Failed to get @id avatar for @generator: %exception', [
+              '@id' => $user->id(),
+              '@generator' => $avatar_generator,
+              '%exception' => $e->getMessage(),
+            ]));
+          return NULL;
         }
       }
     }
