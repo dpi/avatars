@@ -174,7 +174,8 @@ class AvatarManager implements AvatarManagerInterface {
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $this->loggerFactory
             ->get('avatars')
             ->error($this->t('Failed to get @id avatar for @generator: %exception', [

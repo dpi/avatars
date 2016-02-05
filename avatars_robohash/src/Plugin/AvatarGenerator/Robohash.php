@@ -111,7 +111,7 @@ class Robohash extends AvatarGeneratorBase {
       $summary[] = $this->t('Missing Configuration');
     }
     else {
-      $summary[]['#markup'] = $this->t('Type: @type | Background: @background' , [
+      $summary[]['#markup'] = $this->t('Type: @type | Background: @background', [
         '@type' => $this->configuration['type'],
         '@background' => $this->configuration['background'],
       ]);

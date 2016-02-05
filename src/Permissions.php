@@ -10,7 +10,6 @@ namespace Drupal\avatars;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\avatars\Entity\AvatarGenerator;
 
 /**
  * Define a permission generator.

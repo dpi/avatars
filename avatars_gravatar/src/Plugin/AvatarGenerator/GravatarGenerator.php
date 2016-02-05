@@ -84,10 +84,11 @@ class GravatarGenerator extends AvatarGeneratorBase {
       $summary[] = $this->t('Missing Configuration');
     }
     else {
-      $summary[]['#markup'] = $this->t('Type: @type' , [
+      $summary[]['#markup'] = $this->t('Type: @type', [
         '@type' => $this->configuration['type'],
       ]);
     }
     return $summary;
   }
+
 }

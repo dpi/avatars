@@ -52,11 +52,14 @@ class AvatarsImageRadios extends Radios {
         [$class, 'preRenderCompositeFormElement'],
       ],
       '#attached' => [
-        'library' => ['avatars/avatars.avatars_image_radios']
+        'library' => ['avatars/avatars.avatars_image_radios'],
       ],
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function processRadios(&$element, \Drupal\Core\Form\FormStateInterface $form_state, &$complete_form) {
     static::setAttributes($element, ['avatar_preview_radios']);
 

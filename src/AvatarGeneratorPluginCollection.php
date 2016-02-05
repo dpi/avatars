@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\avatars\AvatarGeneratorPluginCollection
+ * Contains \Drupal\avatars\AvatarGeneratorPluginCollection.
  */
 
 namespace Drupal\avatars;

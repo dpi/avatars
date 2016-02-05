@@ -12,7 +12,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\avatars\AvatarGeneratorPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\unlimited_number\Element\UnlimitedNumber;
 use Drupal\Core\Cache\Cache;
 use Drupal\avatars\Entity\AvatarGenerator;
@@ -134,7 +133,7 @@ class Settings extends ConfigFormBase {
           'class' => [
             'checkbox',
           ],
-        ]
+        ],
       ];
       $row['weight'] = [
         '#type' => 'weight',
@@ -142,8 +141,8 @@ class Settings extends ConfigFormBase {
         '#title_display' => 'invisible',
         '#default_value' => $instance->getWeight(),
         '#attributes' => [
-          'class' => ['generator-weight']
-        ]
+          'class' => ['generator-weight'],
+        ],
       ];
 
       $operations = [];

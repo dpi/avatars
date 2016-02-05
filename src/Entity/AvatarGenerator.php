@@ -13,7 +13,6 @@ use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\avatars\AvatarGeneratorPluginCollection;
 
 /**
- *
  * Defines storage for an avatar generator configuration.
  *
  * @ConfigEntityType(
@@ -51,21 +50,21 @@ class AvatarGenerator extends ConfigEntityBase implements AvatarGeneratorInterfa
   protected $id;
 
   /**
-   * Label
+   * Label.
    *
    * @var string
    */
   protected $label;
 
   /**
-   * Weight
+   * Weight.
    *
    * @var int
    */
   protected $weight = 0;
 
   /**
-   * Status
+   * Status.
    *
    * @var bool
    */
