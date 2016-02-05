@@ -1,0 +1,5 @@
+entity.avatar_generator.add:
+  title: 'Add avatar generator'
+  route_name: entity.avatar_generator.add
+  appears_on:
+    - avatars.config

@@ -10,6 +10,7 @@ namespace Drupal\avatars;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\avatars\Entity\AvatarGenerator;
 
 /**
  * Define a permission generator.
@@ -53,19 +54,15 @@ class Permissions implements ContainerInjectionInterface {
   public function avatarGenerators() {
     $permissions = [];
 
-    foreach ($this->avatarGenerator->getDefinitions() as $plugin_id => $definition) {
-      if ($plugin_id == 'broken') {
-        continue;
-      }
-
+    /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
+    $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
+    foreach ($avatars_generator_storage->getEnabledAvatarGenerators() as $instance) {
       $t_args = [
-        '%avatar_generator' => $definition['label'],
-        '%provider' => $definition['provider'],
+        '%label' => $instance->label(),
       ];
-
-      $permissions["avatars avatar_generator user $plugin_id"] = [
-        'title' => $this->t('Use %avatar_generator by %provider', $t_args),
-        'description' => $this->t('User can select %avatar_generator avatar generator.', $t_args),
+      $permissions["avatars avatar_generator user " . $instance->id()] = [
+        'title' => $this->t('Use %label', $t_args),
+        'description' => $this->t('User can select %label avatar generator.', $t_args),
       ];
     }
 

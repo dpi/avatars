@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use Drupal\avatars\Entity\AvatarPreview;
@@ -47,6 +48,13 @@ class AvatarManager implements AvatarManagerInterface {
   protected $loggerFactory;
 
   /**
+   * Storage for avatar generator storage entities.
+   *
+   * @var \Drupal\avatars\AvatarGeneratorStorageInterface
+   */
+  protected $avatarGeneratorStorage;
+
+  /**
    * The avatar generator plugin manager.
    *
    * @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface
@@ -62,13 +70,17 @@ class AvatarManager implements AvatarManagerInterface {
    *   The cache tag invalidator.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger channel factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
-  function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory,  AvatarGeneratorPluginManagerInterface $avatar_generator) {
+  function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, AvatarGeneratorPluginManagerInterface $avatar_generator) {
     $this->configFactory = $config_factory;
     $this->cacheTagInvalidator = $cache_tag_invalidator;
     $this->loggerFactory = $logger_factory;
+    $this->avatarGeneratorStorage = $entity_type_manager
+      ->getStorage('avatar_generator');
     $this->avatarGenerator = $avatar_generator;
   }
 
@@ -100,7 +112,8 @@ class AvatarManager implements AvatarManagerInterface {
    */
   function findValidAvatar(UserInterface $user) {
     foreach ($this->getPreferences($user) as $avatar_generator => $scope) {
-      if ($this->avatarGenerator->getDefinition($avatar_generator, FALSE)) {
+      $avatar_generator = $this->avatarGeneratorStorage->load($avatar_generator);
+      if ($avatar_generator instanceof AvatarGeneratorInterface) {
         $this->refreshAvatarGenerator($user, $avatar_generator, $scope);
         if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
           if ($avatar_preview->getAvatar()) {
@@ -117,17 +130,18 @@ class AvatarManager implements AvatarManagerInterface {
    *
    * @param \Drupal\user\UserInterface
    *   A user entity.
-   * @param string $avatar_generator
-   *   An avatar generator plugin ID.
+   * @param \Drupal\avatars\AvatarGeneratorInterface $avatar_generator
+   *   An avatar generator instance.
    * @param int $scope
-   *   Scope level.
+   *   Caching scope level.
    *
-   * @return \Drupal\avatars\AvatarPreviewInterface
+   * @return \Drupal\avatars\AvatarPreviewInterface|FALSE
    *   An avatar preview entity.
    */
-  public function refreshAvatarGenerator(UserInterface $user, $avatar_generator, $scope) {
+  public function refreshAvatarGenerator(UserInterface $user, AvatarGeneratorInterface $avatar_generator, $scope) {
     if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
-      if ($scope != AvatarPreviewInterface::SCOPE_TEMPORARY && $scope < $avatar_preview->getScope()) {
+      // @todo fix this block. does not make much sense.
+      if ($scope != AvatarPreviewInterface::SCOPE_TEMPORARY && $scope != $avatar_preview->getScope()) {
         $avatar_preview
           ->setScope($scope)
           ->save();
@@ -136,10 +150,10 @@ class AvatarManager implements AvatarManagerInterface {
     else {
       $file = $this->getAvatarFile($avatar_generator, $user);
       $avatar_preview = AvatarPreview::create()
-        ->setAvatarGeneratorId($avatar_generator)
+        ->setAvatarGeneratorId($avatar_generator->id())
         ->setAvatar($file instanceof FileInterface ? $file : NULL)
         ->setUser($user)
-        ->setScope($scope);
+        ->setScope($file instanceof FileInterface ? $scope : AvatarPreviewInterface::SCOPE_TEMPORARY);
       $avatar_preview->save();
     }
 
@@ -157,8 +171,11 @@ class AvatarManager implements AvatarManagerInterface {
    */
   function refreshAllAvatars(UserInterface $user) {
     $previews = [];
-    $definitions = $this->avatarGenerator->getDefinitions();
-    foreach (array_keys($definitions) as $avatar_generator) {
+    $instances = $this->avatarGeneratorStorage->getEnabledAvatarGenerators();
+    foreach ($instances as $avatar_generator) {
+      if ($avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
+        continue;
+      }
       $previews[] = $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
     }
     return $previews;
@@ -170,23 +187,22 @@ class AvatarManager implements AvatarManagerInterface {
    * Ignores any existing caches. Use refreshAvatarGenerator to take advantage
    * of internal caching.
    *
-   * @param string $avatar_generator
-   *   The avatar generator plugin ID.
+   * @param \Drupal\avatars\AvatarGeneratorInterface $avatar_generator
+   *   An avatar generator instance.
    * @param \Drupal\user\UserInterface
    *   A user entity.
    *
    * @return \Drupal\file\FileInterface|FALSE
    */
-  function getAvatarFile($avatar_generator, UserInterface $user) {
-    /** @var \Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorPluginInterface $plugin */
-    $plugin = $this->avatarGenerator->createInstance($avatar_generator);
+  function getAvatarFile(AvatarGeneratorInterface $avatar_generator, UserInterface $user) {
+    $plugin = $avatar_generator->getPlugin();
 
     // Get avatar if it is already local.
     $file = $plugin->getFile($user);
 
     // Otherwise get the URL of the avatar, download it, and store it as a file.
     if (!$file && $url = $plugin->generateUri($user)) {
-      $directory = 'public://avatar_kit/' . $avatar_generator;
+      $directory = 'public://avatar_kit/' . $avatar_generator->id();
       if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
         try {
           $client = new Client();
@@ -194,13 +210,12 @@ class AvatarManager implements AvatarManagerInterface {
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
           $this->loggerFactory
             ->get('avatars')
             ->error($this->t('Failed to get @id avatar for @generator: %exception', [
               '@id' => $user->id(),
-              '@generator' => $avatar_generator,
+              '@generator' => $avatar_generator->id(),
               '%exception' => $e->getMessage(),
             ]));
           return NULL;
@@ -225,20 +240,20 @@ class AvatarManager implements AvatarManagerInterface {
    *   value: value of constants prefixed with AvatarPreviewInterface::SCOPE_*
    */
   public function getPreferences(UserInterface $user) {
-    $generators = $this->configFactory
-      ->get('avatars.settings')
-      ->get('avatar_generators');
+    $instances = $this->avatarGeneratorStorage->getEnabledAvatarGenerators();
+    uasort($instances, '\Drupal\avatars\Entity\AvatarGenerator::sort');
 
-    foreach ($generators as $generator) {
-      if ($generator == '_user_preference') {
-        $generator = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
+    foreach ($instances as $instance) {
+      $id = $instance->id();
+      if ($instance->getPlugin()->getPluginId() == 'user_preference') {
+        $id = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
         $scope = AvatarPreviewInterface::SCOPE_USER_SELECTED;
       }
       else {
         $scope = AvatarPreviewInterface::SCOPE_SITE_FALLBACK;
       }
 
-      yield $generator => $scope;
+      yield $id => $scope;
     }
   }
 
@@ -261,12 +276,12 @@ class AvatarManager implements AvatarManagerInterface {
   /**
    * Triggers expected change for dynamic avatar generator.
    *
-   * @param string $avatar_generator
-   *   An avatar generator plugin ID.
+   * @param \Drupal\avatars\AvatarGeneratorInterface $avatar_generator
+   *   An avatar generator instance.
    * @param \Drupal\user\UserInterface $user
    *   A user entity.
    */
-  function notifyDynamicChange($avatar_generator, UserInterface $user) {
+  function notifyDynamicChange(AvatarGeneratorInterface $avatar_generator, UserInterface $user) {
     if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
       $avatar_preview->delete();
     }

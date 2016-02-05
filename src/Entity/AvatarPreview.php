@@ -14,6 +14,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\file\FileInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\user\UserInterface;
+use Drupal\avatars\AvatarGeneratorInterface;
 
 /**
  * Defines the avatar preview entity.
@@ -108,10 +109,10 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
   /**
    * {@inheritdoc}
    */
-  public static function getAvatarPreview($avatar_generator, UserInterface $user) {
-    $entities = \Drupal::entityManager()->getStorage('avatars_preview')
+  public static function getAvatarPreview(AvatarGeneratorInterface $avatar_generator, UserInterface $user) {
+    $entities = \Drupal::entityTypeManager()->getStorage('avatars_preview')
       ->loadByProperties([
-        'avatar_generator' => $avatar_generator,
+        'avatar_generator' => $avatar_generator->id(),
         'uid' => $user->id(),
       ]);
     return reset($entities);

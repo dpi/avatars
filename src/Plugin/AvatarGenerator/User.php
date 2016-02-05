@@ -16,6 +16,7 @@ use Drupal\user\Entity\User as CoreUser;
  * @AvatarGenerator(
  *   id = "user",
  *   label = @Translation("User upload"),
+ *   description = @Translation("Image uploaded by the user to the site."),
  *   dynamic = TRUE,
  *   fallback = FALSE,
  *   remote = FALSE

@@ -161,14 +161,14 @@ interface AvatarPreviewInterface extends ContentEntityInterface {
   /**
    * Queries for an avatar preview and loads it.
    *
-   * @param string $avatar_generator
-   *   An avatar generator plugin ID.
+   * @param \Drupal\avatars\AvatarGeneratorInterface $avatar_generator
+   *   An avatar generator instance.
    * @param \Drupal\user\UserInterface $user
    *   A user entity.
    *
    * @return \Drupal\avatars\AvatarPreviewInterface
    *   An avatar preview entity.
    */
-  public static function getAvatarPreview($avatar_generator, UserInterface $user);
+  public static function getAvatarPreview(AvatarGeneratorInterface $avatar_generator, UserInterface $user);
 
 }

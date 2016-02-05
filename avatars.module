@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\avatars\Entity\AvatarGenerator;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\avatars\AvatarPreviewInterface;
@@ -36,15 +37,18 @@ const AK_FIELD_AVATAR_GENERATOR = 'avatars_avatar_generator';
  */
 function avatars_cron() {
   $intervals = \Drupal::config('avatars.settings')->get('refresh_interval');
-  $avatars_preview_storage = \Drupal::entityManager()->getStorage('avatars_preview');
-  /** @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generators $avatar_generator */
-  $avatar_generators = \Drupal::service('plugin.manager.avatar_generator');
+  $avatars_preview_storage = \Drupal::entityTypeManager()->getStorage('avatars_preview');
+  /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
+  $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
+  $avatars_generators = $avatars_generator_storage->getEnabledAvatarGenerators();
 
   // Remove expired previews.
-  foreach ($avatar_generators->getDefinitions() as $avatar_generator => $definition) {
+  foreach ($avatars_generators as $avatar_generator) {
+    $definition = $avatar_generator->getPlugin()->getPluginDefinition();
+
     $query = $avatars_preview_storage
       ->getQuery()
-      ->condition('avatar_generator', $avatar_generator);
+      ->condition('avatar_generator', $avatar_generator->id());
 
     if ($definition['dynamic']) {
       $offset = $intervals['dynamic'] > 0 ? $intervals['dynamic'] : 0;
@@ -91,7 +95,14 @@ function avatars_entity_presave(EntityInterface $entity) {
     $avatar_manager = \Drupal::service('avatars.avatar_manager');
     $avatar_manager->invalidateUserAvatar($entity);
     // @todo: only notify if value of AK_FIELD_PICTURE_USER changed
-    $avatar_manager->notifyDynamicChange('user', $entity);
+
+    /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
+    $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
+    foreach ($avatars_generator_storage->getEnabledAvatarGenerators() as $avatar_generator) {
+      if ($avatar_generator->getPlugin()->getPluginId() == 'user') {
+        $avatar_manager->notifyDynamicChange($avatar_generator, $entity);
+      }
+    }
   }
 }
 
@@ -157,15 +168,16 @@ function template_preprocess_avatar_preview_radio(array &$variables) {
  */
 function avatars_callback_avatar_generators(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE) {
   // @todo remove this, add update hook for existing field form displays.
-  /** @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generators $avatar_generator */
-  $avatar_generators = \Drupal::service('plugin.manager.avatar_generator');
+  /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
+  $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
 
   $options = ['_none' => t('Site default')];
-  foreach ($avatar_generators->getDefinitions() as $plugin_id => $definition) {
-    if ($plugin_id != 'broken') {
-      if ($entity instanceof UserInterface && $entity->hasPermission("avatars avatar_generator user $plugin_id")) {
-        $options[$plugin_id] = $definition['label'];
-      }
+  foreach ($avatars_generator_storage->getEnabledAvatarGenerators() as $instance) {
+    if ($instance->getPlugin()->getPluginId() == 'user_preference') {
+      continue;
+    }
+    if ($entity instanceof UserInterface && $entity->hasPermission("avatars avatar_generator user " . $instance->id())) {
+      $options[$instance->id()] = $instance->label();
     }
   }
 

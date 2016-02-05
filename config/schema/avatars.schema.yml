@@ -1,13 +1,7 @@
 avatars.settings:
-  type: mapping
+  type: config_object
   label: 'Avatar Kit settings'
   mapping:
-    avatar_generators:
-      type: sequence
-      label: 'Enabled avatar generators ordered by preference.'
-      sequence:
-        type: string
-        label: 'Avatar generator machine ID.'
     refresh_interval:
       type: mapping
       mapping:
@@ -17,6 +11,31 @@ avatars.settings:
         static:
           type: integer
           label: 'How long should non-preferred static avatars be cached. Leave empty to never delete. Preferred static avatars never expire.'
+
+avatars.generator.*:
+  type: config_entity
+  label: 'Avatar Generator'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    weight:
+      type: integer
+      label: 'Weight'
+    plugin:
+      type: string
+      label: 'Plugin'
+    provider:
+      type: string
+      label: 'Provider'
+    settings:
+      type: avatar_generator.settings.[%parent.plugin]
+
+avatar_generator.settings.*:
+  type: avatar_generator_settings
 
 field.widget.settings.avatars_generator_preview:
   type: mapping

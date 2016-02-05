@@ -7,20 +7,88 @@
 
 namespace Drupal\avatars\Plugin\AvatarGenerator;
 
+use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * AvatarGenerator plugin base class.
  */
-abstract class AvatarGeneratorBase implements AvatarGeneratorPluginInterface {
+abstract class AvatarGeneratorBase extends PluginBase implements AvatarGeneratorPluginInterface {
 
   /**
-   * Generate a unique identifier for an account.
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->configuration = array_merge($this->defaultConfiguration(), $this->configuration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    $this->configuration = $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  }
+
+  /**
+   * Create a site-unique identifier for a user.
    *
-   * return string
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   A user account.
+   *
+   * @return string
+   *   A unique string based on the user.
    */
   protected function getIdentifier(AccountInterface $account) {
     return !empty($account->getEmail()) ? $account->getEmail() : (string) $account->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    return [];
   }
 
   /**

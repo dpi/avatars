@@ -5,3 +5,28 @@ avatars.config:
     _title: 'Avatar Kit settings'
   requirements:
     _permission: 'administer avatars'
+
+# Avatar generator plugin instances
+entity.avatar_generator.add:
+  path: '/admin/config/people/avatars/generators/add'
+  defaults:
+    _entity_form: 'avatar_generator.add'
+    _title: 'Add avatar generator'
+  requirements:
+    _permission: 'administer avatars'
+
+entity.avatar_generator.edit_form:
+  path: '/admin/config/people/avatars/generators/{avatar_generator}'
+  defaults:
+    _entity_form: 'avatar_generator.default'
+    _title: 'Edit avatar generator'
+  requirements:
+    _permission: 'administer avatars'
+
+entity.avatar_generator.delete_form:
+  path: '/admin/config/people/avatars/generators/{avatar_generator}/delete'
+  defaults:
+    _entity_form: 'avatar_generator.delete'
+    _title: 'Delete avatar generator'
+  requirements:
+    _permission: 'administer avatars'

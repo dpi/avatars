@@ -10,6 +10,7 @@ namespace Drupal\avatars\Plugin\Field\FieldWidget;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsButtonsWidget;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\avatars\Entity\AvatarGenerator;
 
 /**
  * Widget for avatar generator selection fields.
@@ -90,19 +91,17 @@ class AvatarGeneratorPreviewWidget extends OptionsButtonsWidget {
 
     /** @var \Drupal\avatars\AvatarManager $avatar_manager */
     $avatar_manager = \Drupal::service('avatars.avatar_manager');
-    /** @var \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generators $avatar_generator */
-    $avatar_generators = \Drupal::service('plugin.manager.avatar_generator');
 
     $options = [];
     $thumbs = [];
 
     foreach ($avatar_manager->refreshAllAvatars($user) as $preview) {
       if ($file = $preview->getAvatar()) {
-        $definition = $avatar_generators->getDefinition($preview->getAvatarGeneratorId());
-
-        $options[$definition['id']] = (string) $definition['label'];
-        $thumbs[$definition['id']] = [
-          'label' => (string) $definition['label'],
+        $instance_id = $preview->getAvatarGeneratorId();
+        $avatar_generator = AvatarGenerator::load($instance_id);
+        $options[$instance_id] = $avatar_generator->label();
+        $thumbs[$instance_id] = [
+          'label' => $avatar_generator->label(),
           'uri' => $file->getFileUri(),
         ];
       }

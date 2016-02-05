@@ -1,0 +1,4 @@
+avatar_generator_settings:
+  type: mapping
+  label: 'Avatar generator settings'
+  mapping: []
