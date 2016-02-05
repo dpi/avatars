@@ -1,0 +1,10 @@
+avatar_generator.settings.robohash:
+  type: avatar_generator_settings
+  label: 'Robohash'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    background:
+      type: string
+      label: 'Background'
