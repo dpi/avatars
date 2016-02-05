@@ -1,0 +1,7 @@
+avatar_generator.settings.gravatar_generator:
+  type: avatar_generator_settings
+  label: 'Gravatar generator'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
