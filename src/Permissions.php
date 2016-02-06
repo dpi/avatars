@@ -55,7 +55,11 @@ class Permissions implements ContainerInjectionInterface {
 
     /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
     $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
-    foreach ($avatars_generator_storage->getEnabledAvatarGenerators() as $instance) {
+    foreach ($avatars_generator_storage->loadMultiple() as $instance) {
+      if ($instance->getPlugin()->getPluginId() == 'user_preference') {
+        continue;
+      }
+
       $t_args = [
         '%label' => $instance->label(),
       ];

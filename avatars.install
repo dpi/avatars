@@ -94,3 +94,31 @@ function avatars_install() {
       ->save();
   }
 }
+
+/**
+ * Migrate list of enabled avatar generators to plugin configs.
+ */
+function avatars_update_8001() {
+  $config_factory = \Drupal::configFactory();
+
+  // A list of avatar generator plugin ID's ordered by weight.
+  $avatar_settings = $config_factory->getEditable('avatars.settings');
+  $avatar_generators = $avatar_settings->get('avatar_generators');
+  if (is_array($avatar_generators)) {
+    foreach ($avatar_generators as $weight => $avatar_generator) {
+      $avatar_generator = $avatar_generator == '_user_preference' ? 'user_preference' : $avatar_generator;
+      $config_factory->getEditable('avatars.generator.' . $avatar_generator)
+        ->setData([
+          'id' => $avatar_generator,
+          'label' => $avatar_generator,
+          'weight' => $weight,
+          'plugin' => $avatar_generator,
+          'provider' => $avatar_generator,
+          'settings' => [],
+          'status' => TRUE,
+        ])
+      ->save();
+    }
+    $avatar_settings->clear('avatar_generators')->save();
+  }
+}
