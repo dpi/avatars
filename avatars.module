@@ -200,7 +200,7 @@ function avatars_callback_avatar_generators(FieldStorageDefinitionInterface $def
     if ($instance->getPlugin()->getPluginId() == 'user_preference') {
       continue;
     }
-    if ($entity instanceof UserInterface && $entity->hasPermission("avatars avatar_generator user " . $instance->id())) {
+    if ($entity instanceof UserInterface) {
       $options[$instance->id()] = $instance->label();
     }
   }

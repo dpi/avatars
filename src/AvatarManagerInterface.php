@@ -110,4 +110,17 @@ interface AvatarManagerInterface {
    */
   function notifyDynamicChange(AvatarGeneratorInterface $avatar_generator, UserInterface $user);
 
+  /**
+   * Gets a lit of active plugins a user has permission to use.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   A user entity.
+   * @param bool $exclude_user_preference
+   *   Exclude 'user preference' plugin types.
+   *
+   * @return \Drupal\avatars\AvatarGeneratorInterface[]|\Generator
+   *   An array of avatar generator entities.
+   */
+  function getAvatarGeneratorsForUser(UserInterface $user, $exclude_user_preference = TRUE);
+
 }

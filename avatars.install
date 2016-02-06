@@ -26,7 +26,7 @@ function avatars_install() {
   if (FieldConfig::loadByName('user', 'user', AK_FIELD_AVATAR_GENERATOR)) {
     entity_get_form_display('user', 'user', 'default')
       ->setComponent(AK_FIELD_AVATAR_GENERATOR, [
-        'type' => 'options_buttons',
+        'type' => 'avatars_generator_preview',
       ])
       ->save();
   }
@@ -133,4 +133,17 @@ function avatars_update_8002() {
   if ($field_storage = $config_factory->getEditable('field.storage.user.avatars_avatar_generator')) {
     $field_storage->set('persist_with_no_fields', FALSE)->save();
   }
+}
+
+/**
+ * Update generator preference field to new widget.
+ *
+ * Remove allowed_values_function.
+ */
+function avatars_update_8003() {
+  entity_get_form_display('user', 'user', 'default')
+    ->setComponent(AK_FIELD_AVATAR_GENERATOR, [
+      'type' => 'avatars_generator_preview',
+    ])
+    ->save();
 }

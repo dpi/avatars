@@ -78,6 +78,10 @@ class AvatarGeneratorPreviewWidget extends OptionsButtonsWidget {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    if ($this->isDefaultValueWidget($form_state)) {
+      return parent:: formElement($items, $delta, $element, $form, $form_state);
+    }
+
     $value = isset($items[$delta]->value) ? $items[$delta]->value : NULL;
     if (isset($value)) {
       $default_value = !empty($value) ? $value : '_none';
@@ -123,6 +127,9 @@ class AvatarGeneratorPreviewWidget extends OptionsButtonsWidget {
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
+    if ($this->isDefaultValueWidget($form_state)) {
+      return parent::massageFormValues($values, $form, $form_state);
+    }
     $new_values = [];
     foreach ($values as $value) {
       $new_values[]['value'] = $value;

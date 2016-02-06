@@ -145,11 +145,7 @@ class AvatarManager implements AvatarManagerInterface {
    */
   function refreshAllAvatars(UserInterface $user) {
     $previews = [];
-    $instances = $this->avatarGeneratorStorage->getEnabledAvatarGenerators();
-    foreach ($instances as $avatar_generator) {
-      if ($avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
-        continue;
-      }
+    foreach ($this->getAvatarGeneratorsForUser($user) as $avatar_generator) {
       $previews[] = $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
     }
     return $previews;
@@ -195,12 +191,12 @@ class AvatarManager implements AvatarManagerInterface {
    * {@inheritdoc}
    */
   public function getPreferences(UserInterface $user) {
-    $instances = $this->avatarGeneratorStorage->getEnabledAvatarGenerators();
-    uasort($instances, '\Drupal\avatars\Entity\AvatarGenerator::sort');
+    $avatar_generators = $this->getAvatarGeneratorsForUser($user, FALSE);
+    uasort($avatar_generators, '\Drupal\avatars\Entity\AvatarGenerator::sort');
 
-    foreach ($instances as $instance) {
-      $id = $instance->id();
-      if ($instance->getPlugin()->getPluginId() == 'user_preference') {
+    foreach ($avatar_generators as $avatar_generator) {
+      $id = $avatar_generator->id();
+      if ($avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
         $id = $user->{AK_FIELD_AVATAR_GENERATOR}->value;
         $scope = AvatarPreviewInterface::SCOPE_USER_SELECTED;
       }
@@ -233,6 +229,23 @@ class AvatarManager implements AvatarManagerInterface {
     if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
       $avatar_preview->delete();
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function getAvatarGeneratorsForUser(UserInterface $user, $exclude_user_preference = TRUE) {
+    $avatar_generators = [];
+    foreach ($this->avatarGeneratorStorage->getEnabledAvatarGenerators() as $avatar_generator) {
+      if (!$user->hasPermission("avatars avatar_generator user " . $avatar_generator->id())) {
+        continue;
+      }
+      if ($exclude_user_preference && $avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
+        continue;
+      }
+      $avatar_generators[] = $avatar_generator;
+    }
+    return $avatar_generators;
   }
 
 }
