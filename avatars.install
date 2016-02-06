@@ -117,8 +117,20 @@ function avatars_update_8001() {
           'settings' => [],
           'status' => TRUE,
         ])
-      ->save();
+        ->save();
     }
     $avatar_settings->clear('avatar_generators')->save();
+  }
+}
+
+/**
+ * Remove persist after field instance delete for preference field.
+ *
+ * This was preventing re-install of module
+ */
+function avatars_update_8002() {
+  $config_factory = \Drupal::configFactory();
+  if ($field_storage = $config_factory->getEditable('field.storage.user.avatars_avatar_generator')) {
+    $field_storage->set('persist_with_no_fields', FALSE)->save();
   }
 }

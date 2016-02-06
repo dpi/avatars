@@ -17,4 +17,4 @@ cardinality: 1
 langcode: en
 translatable: true
 indexes: {  }
-persist_with_no_fields: true
+persist_with_no_fields: false
