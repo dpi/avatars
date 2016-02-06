@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for Robohash module.
+ */
+
+/**
+ * Migrate plugins with old plugin IDs to new plugin IDs and settings.
+ */
+function avatars_robohash_update_8001() {
+  $plugin_ids = [
+    // Old plugin ID => 'type' in plugin settings.
+    'robohash_monsters' => 'monsters',
+    'robohash_robot_heads' => 'robot_heads',
+    'robohash_robots' => 'robots',
+  ];
+
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('avatars.generator.') as $config_id) {
+    $config = $config_factory->getEditable($config_id);
+    $old_plugin_id = $config->get('plugin');
+    if ($old_plugin_id && isset($plugin_ids[$old_plugin_id])) {
+      $config
+        ->set('plugin', 'robohash')
+        ->set('provider', 'avatars_robohash')
+        ->set('settings', [
+          'type' => $plugin_ids[$old_plugin_id],
+          'background' => 'transparent',
+        ])
+        ->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function avatars_robohash_update_dependencies() {
+  $dependencies['avatars_robohash'][8001] = [
+    'avatars' => 8001,
+  ];
+  return $dependencies;
+}
