@@ -139,7 +139,7 @@ class Gravatar extends AvatarBase implements GravatarInterface {
       'g' => 'G',
       'pg' => 'PG',
       'r' => 'R',
-      'x' => 'X,',
+      'x' => 'X',
     ];
   }
 

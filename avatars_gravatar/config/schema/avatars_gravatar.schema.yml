@@ -1,3 +1,11 @@
+avatar_generator.settings.gravatar:
+  type: avatar_generator_settings
+  label: 'Gravatar'
+  mapping:
+    maximum_rating:
+      type: string
+      label: 'Maximum content rating'
+
 avatar_generator.settings.gravatar_generator:
   type: avatar_generator_settings
   label: 'Gravatar generator'
