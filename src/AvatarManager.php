@@ -208,7 +208,10 @@ class AvatarManager implements AvatarManagerInterface {
         $scope = AvatarPreviewInterface::SCOPE_SITE_FALLBACK;
       }
 
-      yield $id => $scope;
+      // Catches empty user preference.
+      if ($id) {
+        yield $id => $scope;
+      }
     }
   }
 
