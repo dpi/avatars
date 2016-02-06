@@ -107,6 +107,30 @@ function avatars_entity_presave(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_update().
+ *
+ * Dynamic avatar generators commonly rely on email to generate hash. If email
+ * changes, then destroy existing avatar previews from dynamic generators.
+ */
+function avatars_entity_update(EntityInterface $entity) {
+  if ($entity instanceof UserInterface && isset($entity->original)) {
+    $original = $entity->original;
+    if ($original->getEmail() != $entity->getEmail()) {
+      /** @var \Drupal\avatars\AvatarManager $avatar_manager */
+      $avatar_manager = \Drupal::service('avatars.avatar_manager');
+      /** @var \Drupal\avatars\AvatarGeneratorStorageInterface $avatars_generator_storage */
+      $avatars_generator_storage = \Drupal::entityTypeManager()->getStorage('avatar_generator');
+      foreach ($avatars_generator_storage->getEnabledAvatarGenerators() as $avatar_generator) {
+        $definition = $avatar_generator->getPlugin()->getPluginDefinition();
+        if (!empty($definition['dynamic'])) {
+          $avatar_manager->notifyDynamicChange($avatar_generator, $entity);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_storage_load().
  */
 function avatars_file_storage_load(array $entities) {
