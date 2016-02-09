@@ -7,5 +7,6 @@ dependencies:
   - user
   - file
   - field
+  - image
   - options
   - unlimited_number
