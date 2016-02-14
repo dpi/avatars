@@ -1,0 +1,7 @@
+name: Avatar Kit Test
+type: module
+description: 'Test module for Avatar Kit.'
+package: Avatars
+core: 8.x
+dependencies:
+  - avatars
