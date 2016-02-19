@@ -174,7 +174,7 @@ class AvatarManager implements AvatarManagerInterface {
         catch (\Exception $e) {
           $this->loggerFactory
             ->get('avatars')
-            ->error($this->t('Failed to get @id avatar for @generator: %exception', [
+            ->warning($this->t('Failed to get @id avatar for @generator: %exception', [
               '@id' => $user->id(),
               '@generator' => $avatar_generator->id(),
               '%exception' => $e->getMessage(),
