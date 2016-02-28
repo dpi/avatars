@@ -7,6 +7,7 @@
 
 namespace Drupal\avatars;
 
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -171,6 +172,10 @@ class AvatarManager implements AvatarManagerInterface {
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }
         }
+        catch (ClientException $e) {
+          // 4xx errors are acceptable, do not need to log.
+          return FALSE;
+        }
         catch (\Exception $e) {
           $this->loggerFactory
             ->get('avatars')
@@ -179,7 +184,7 @@ class AvatarManager implements AvatarManagerInterface {
               '@generator' => $avatar_generator->id(),
               '%exception' => $e->getMessage(),
             ]));
-          return NULL;
+          return FALSE;
         }
       }
     }
