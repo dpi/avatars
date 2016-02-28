@@ -11,7 +11,7 @@ use Drupal\simpletest\WebTestBase;
 use Drupal\Component\Utility\Unicode;
 
 /**
- * @todo
+ * Avatar Kit web test base.
  */
 abstract class AvatarKitWebTestBase extends WebTestBase {
 

@@ -38,14 +38,14 @@ class AvatarKitAdminSettingsTest extends AvatarKitWebTestBase {
 
     // Generator 1 should be in first row, with checked box.
     $elements = $this->xpath('//table//tr[1]/td[1][text()=:label]', [
-      ':label' => $avatar_generator1->label()
+      ':label' => $avatar_generator1->label(),
     ]);
     $this->assertTrue(!empty($elements), 'Generator on first row.');
     $this->assertFieldChecked('edit-avatar-generators-' . $avatar_generator1->id() . '-enabled');
 
     // Generator 2 should be in fourth row, with unchecked box.
     $elements = $this->xpath('//table//tr[4]/td[1][text()=:label]', [
-      ':label' => $avatar_generator2->label()
+      ':label' => $avatar_generator2->label(),
     ]);
     $this->assertTrue(!empty($elements), 'Generator on fourth row.');
     $this->assertNoFieldChecked('edit-avatar-generators-' . $avatar_generator2->id() . '-enabled');
@@ -104,24 +104,6 @@ class AvatarKitAdminSettingsTest extends AvatarKitWebTestBase {
     $this->drupalPostForm($avatar_generator->toUrl('delete-form'), [], t('Delete'));
     $this->assertUrl('admin/config/people/avatars');
     $this->assertRaw(t('Avatar generator %label was deleted.', $t_args));
-  }
-
-
-  function testGenerator() {
-    $this->deleteAvatarGenerators();
-
-    $avatar_generator1 = $this->createAvatarGenerator();
-    $this->setAvatarGeneratorPreferences([$avatar_generator1->id() => TRUE]);
-
-    $user = $this->createUser(['administer avatars','avatars avatar_generator user ' . $avatar_generator1->id()]);
-    $this->drupalLogin($user);
-    $this->drupalGet('admin/config/people/avatars');
-
-    /** @var \Drupal\avatars\AvatarManagerInterface $am */
-    $am = \Drupal::service('avatars.avatar_manager');
-    debug($am->findValidAvatar($user));
-
-    $this->drupalGet($user->toUrl());
   }
 
 }

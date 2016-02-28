@@ -79,7 +79,7 @@ class AvatarGeneratorPreviewWidget extends OptionsButtonsWidget {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     if ($this->isDefaultValueWidget($form_state)) {
-      return parent:: formElement($items, $delta, $element, $form, $form_state);
+      return parent::formElement($items, $delta, $element, $form, $form_state);
     }
 
     $value = isset($items[$delta]->value) ? $items[$delta]->value : NULL;
