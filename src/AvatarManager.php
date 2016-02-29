@@ -11,10 +11,10 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use GuzzleHttp\ClientInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use GuzzleHttp\Client;
 use Drupal\avatars\Entity\AvatarPreview;
 use Drupal\user\UserInterface;
 use Drupal\file\FileInterface;
@@ -33,6 +33,13 @@ class AvatarManager implements AvatarManagerInterface {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * The HTTP client to fetch the feed data with.
+   *
+   * @var \GuzzleHttp\ClientInterface
+   */
+  protected $httpClient;
 
   /**
    * The cache tag invalidator.
@@ -67,6 +74,8 @@ class AvatarManager implements AvatarManagerInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \GuzzleHttp\ClientInterface $http_client
+   *   The Guzzle HTTP client.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tag_invalidator
    *   The cache tag invalidator.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
@@ -76,8 +85,9 @@ class AvatarManager implements AvatarManagerInterface {
    * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
-  function __construct(ConfigFactoryInterface $config_factory, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, AvatarGeneratorPluginManagerInterface $avatar_generator) {
+  function __construct(ConfigFactoryInterface $config_factory, ClientInterface $http_client, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, AvatarGeneratorPluginManagerInterface $avatar_generator) {
     $this->configFactory = $config_factory;
+    $this->httpClient = $http_client;
     $this->cacheTagInvalidator = $cache_tag_invalidator;
     $this->loggerFactory = $logger_factory;
     $this->avatarGeneratorStorage = $entity_type_manager
@@ -166,8 +176,7 @@ class AvatarManager implements AvatarManagerInterface {
       $directory = 'public://avatar_kit/' . $avatar_generator->id();
       if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
         try {
-          $client = new Client();
-          if (($result = $client->get($url)) && ($result->getStatusCode() == 200)) {
+          if (($result = $this->httpClient->get($url)) && ($result->getStatusCode() == 200)) {
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
           }

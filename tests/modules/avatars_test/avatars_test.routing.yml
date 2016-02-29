@@ -1,0 +1,7 @@
+avatars_test.image:
+  path: '/avatars_test/image.xyz'
+  defaults:
+    _title: 'Image Test'
+    _controller: '\Drupal\avatars_test\Controller\AvatarKitTestController::image'
+  requirements:
+    _access: 'TRUE'

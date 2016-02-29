@@ -9,6 +9,7 @@ namespace Drupal\avatars_test\Plugin\AvatarGenerator;
 
 use Drupal\avatars\Plugin\AvatarGenerator\AvatarGeneratorBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 
 /**
  * Static test avatar generator.
@@ -28,7 +29,7 @@ class StaticTestGenerator extends AvatarGeneratorBase {
    * {@inheritdoc}
    */
   public function generateUri(AccountInterface $account) {
-    return 'http://example.com/image.jpg';
+    return Url::fromRoute('avatars_test.image', [], ['absolute' => TRUE])->toString();
   }
 
 }
