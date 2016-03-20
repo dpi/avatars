@@ -99,13 +99,16 @@ class AvatarManager implements AvatarManagerInterface {
    * {@inheritdoc}
    */
   public function syncAvatar(UserInterface $user) {
-    if ($avatar_preview = $this->findValidAvatar($user)) {
-      $user->{AK_FIELD_PICTURE_ACTIVE} = $avatar_preview->getAvatar();
+    $field_item_list = &$user->{AK_FIELD_PICTURE_ACTIVE};
+    $file1 = isset($field_item_list->entity) ? $field_item_list->entity : NULL;
+
+    $avatar_preview = $this->findValidAvatar($user);
+    $file2 = $avatar_preview ? $avatar_preview->getAvatar() : NULL;
+
+    if ($file1 !== $file2) {
+      $field_item_list = $file2;
+      $user->save();
     }
-    else {
-      unset($user->{AK_FIELD_PICTURE_ACTIVE});
-    }
-    $user->save();
   }
 
   /**
