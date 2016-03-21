@@ -106,7 +106,7 @@ class AvatarManager implements AvatarManagerInterface {
     $file2 = $avatar_preview ? $avatar_preview->getAvatar() : NULL;
 
     if ($file1 !== $file2) {
-      $field_item_list = $file2;
+      $user->{AK_FIELD_PICTURE_ACTIVE} = $file2;
       $user->save();
     }
   }
