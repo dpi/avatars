@@ -254,10 +254,12 @@ class AvatarManager implements AvatarManagerInterface {
   function getAvatarGeneratorsForUser(UserInterface $user, $exclude_user_preference = TRUE) {
     $avatar_generators = [];
     foreach ($this->avatarGeneratorStorage->getEnabledAvatarGenerators() as $avatar_generator) {
-      if (!$user->hasPermission("avatars avatar_generator user " . $avatar_generator->id())) {
-        continue;
+      if ($avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
+        if ($exclude_user_preference) {
+          continue;
+        }
       }
-      if ($exclude_user_preference && $avatar_generator->getPlugin()->getPluginId() == 'user_preference') {
+      else if (!$user->hasPermission("avatars avatar_generator user " . $avatar_generator->id())) {
         continue;
       }
       $avatar_generators[] = $avatar_generator;
