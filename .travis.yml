@@ -93,7 +93,7 @@ env:
     #- DRUPAL_TI_RUNNERS="phpunit simpletest behat"
     # Use phpunit-core to test modules with phpunit with Drupal 8 core.
     #- DRUPAL_TI_RUNNERS="phpunit-core"
-    - DRUPAL_TI_RUNNERS="simpletest"
+    - DRUPAL_TI_RUNNERS="phpunit-core simpletest"
 
 mysql:
   database: drupal_travis_db
@@ -113,6 +113,7 @@ before_script:
   - drupal-ti before_script
 
 script:
+  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/drupal_travis_db
   - drupal-ti script
 
 after_script:
