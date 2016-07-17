@@ -110,6 +110,10 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
    * {@inheritdoc}
    */
   public static function getAvatarPreview(AvatarGeneratorInterface $avatar_generator, UserInterface $user) {
+    if ($user->isNew()) {
+      return FALSE;
+    }
+
     $entities = \Drupal::entityTypeManager()->getStorage('avatars_preview')
       ->loadByProperties([
         'avatar_generator' => $avatar_generator->id(),

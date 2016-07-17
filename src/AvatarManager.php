@@ -137,6 +137,10 @@ class AvatarManager implements AvatarManagerInterface {
    * {@inheritdoc}
    */
   public function refreshAvatarGenerator(UserInterface $user, AvatarGeneratorInterface $avatar_generator, $scope) {
+    if ($user->isNew()) {
+      return FALSE;
+    }
+
     if ($avatar_preview = AvatarPreview::getAvatarPreview($avatar_generator, $user)) {
       // @todo fix this block. does not make much sense.
       if ($scope != AvatarPreviewInterface::SCOPE_TEMPORARY && $scope != $avatar_preview->getScope()) {
@@ -164,7 +168,10 @@ class AvatarManager implements AvatarManagerInterface {
   function refreshAllAvatars(UserInterface $user) {
     $previews = [];
     foreach ($this->getAvatarGeneratorsForUser($user) as $avatar_generator) {
-      $previews[] = $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
+      $avatar_preview = $this->refreshAvatarGenerator($user, $avatar_generator, AvatarPreviewInterface::SCOPE_TEMPORARY);
+      if ($avatar_preview) {
+        $previews[] = $avatar_preview;
+      }
     }
     return $previews;
   }

@@ -5,6 +5,9 @@ namespace Drupal\Tests\avatars\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\simpletest\UserCreationTrait;
 use Drupal\avatars\Entity\AvatarGenerator;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 
 /**
  * Tests Avatar Manager.
@@ -19,7 +22,7 @@ class AvatarKitManagerTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['avatars', 'user', 'avatars_test', 'system'];
+  public static $modules = ['avatars', 'user', 'avatars_test', 'system', 'field', 'file'];
 
   /**
    * The avatar manager.
@@ -150,6 +153,41 @@ class AvatarKitManagerTest extends KernelTestBase {
 
     $generators = $this->avatarManager->getAvatarGeneratorsForUser($user);
     $this->assertEquals(0, count($generators));
+  }
+
+  /**
+   * Test unsaved user (such as user registration form)
+   */
+  public function testUnsavedUser() {
+    $generator_1 = AvatarGenerator::create([
+      'label' => $this->randomMachineName(),
+      'id' => $this->randomMachineName(),
+      'plugin' => 'avatars_test_static',
+    ]);
+    $generator_1
+      ->setStatus(TRUE)
+      ->save();
+
+    $this->installConfig(['user']);
+    $this->installEntitySchema('avatars_preview');
+
+    // The anonymous role must be granted access to at least on generator
+    // otherwise nothing will tested.
+    Role::load(RoleInterface::ANONYMOUS_ID)
+      ->grantPermission('avatars avatar_generator user ' . $generator_1->id())
+      ->save();
+
+    // Make sure no 'name' is set so an exception is thrown if a user was to be
+    // saved.
+    $user = User::create();
+
+    $user_count_before = count(User::loadMultiple());
+
+    $this->avatarManager->refreshAllAvatars($user);
+
+    // Ensure the temporary user was not saved because the entity reference
+    // field for avatar_preview will attempt to save it.
+    $this->assertEquals($user_count_before, count(User::loadMultiple()));
   }
 
 }

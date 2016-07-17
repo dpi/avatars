@@ -6,6 +6,7 @@ use Drupal\avatars\Entity\AvatarGenerator;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\avatars\AvatarPreviewInterface;
 
 /**
  * Avatar Kit generator test.

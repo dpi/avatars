@@ -81,7 +81,13 @@ abstract class AvatarGeneratorBase extends PluginBase implements AvatarGenerator
    *   A unique string based on the user.
    */
   protected function getIdentifier(AccountInterface $account) {
-    return !empty($account->getEmail()) ? $account->getEmail() : (string) $account->id();
+    // There is no ID for new users (registration page).
+    if ($account->isNew()) {
+      return '0';
+    }
+    else {
+      return !empty($account->getEmail()) ? $account->getEmail() : (string) $account->id();
+    }
   }
 
   /**
