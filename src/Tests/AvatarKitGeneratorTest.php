@@ -1,12 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\avatars\Tests\AvatarKitGeneratorTest.
- */
-
 namespace Drupal\avatars\Tests;
-use Drupal\avatars\AvatarPreviewInterface;
+
+use Drupal\avatars\Entity\AvatarGenerator;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 
 /**
  * Avatar Kit generator test.
@@ -38,4 +37,29 @@ class AvatarKitGeneratorTest extends AvatarKitWebTestBase {
     $this->assertTrue($avatar_preview instanceof AvatarPreviewInterface, 'Downloaded avatar');
   }
 
+  /**
+   * Ensure requesting avatar for anonymous does not crash the site.
+   */
+  public function testAnonymous() {
+    $generator_1 = AvatarGenerator::create([
+      'label' => $this->randomMachineName(),
+      'id' => $this->randomMachineName(),
+      'plugin' => 'avatars_test_static',
+    ]);
+    $generator_1
+      ->setStatus(TRUE)
+      ->save();
+
+    // The anonymous role must be granted access to at least on generator
+    // otherwise nothing will tested.
+    Role::load(RoleInterface::ANONYMOUS_ID)
+      ->grantPermission('avatars avatar_generator user ' . $generator_1->id())
+      ->save();
+
+    $anonymous = User::getAnonymousUser();
+
+    /** @var \Drupal\avatars\AvatarManagerInterface $am */
+    $am = \Drupal::service('avatars.avatar_manager');
+    $am->syncAvatar($anonymous);
+  }
 }

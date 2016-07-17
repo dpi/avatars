@@ -7,17 +7,17 @@
 
 namespace Drupal\avatars;
 
-use GuzzleHttp\Exception\ClientException;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use GuzzleHttp\ClientInterface;
+use Drupal\avatars\Entity\AvatarPreview;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\avatars\Entity\AvatarPreview;
-use Drupal\user\UserInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\file\FileInterface;
+use Drupal\user\UserInterface;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Provides an avatar manager service.
@@ -99,6 +99,10 @@ class AvatarManager implements AvatarManagerInterface {
    * {@inheritdoc}
    */
   public function syncAvatar(UserInterface $user) {
+    if ($user->isAnonymous()) {
+      return;
+    }
+
     $field_item_list = &$user->{AK_FIELD_PICTURE_ACTIVE};
     $file1 = isset($field_item_list->entity) ? $field_item_list->entity : NULL;
 
