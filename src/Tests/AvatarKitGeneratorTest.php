@@ -3,6 +3,7 @@
 namespace Drupal\avatars\Tests;
 
 use Drupal\avatars\Entity\AvatarGenerator;
+use Drupal\file\Entity\File;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
@@ -63,4 +64,61 @@ class AvatarKitGeneratorTest extends AvatarKitWebTestBase {
     $am = \Drupal::service('avatars.avatar_manager');
     $am->syncAvatar($anonymous);
   }
+
+  /**
+   * Tests whether a file is matched with an avatar preview.
+   *
+   * Tests AvatarManagerInterface::getAvatarPreviewByFile()
+   */
+  public function testFileIsAvatarPreview() {
+    $generator_2 = AvatarGenerator::create([
+      'label' => $this->randomMachineName(),
+      'id' => $this->randomMachineName(),
+      'plugin' => 'avatars_test_static',
+    ]);
+    $generator_2
+      ->setStatus(TRUE)
+      ->save();
+
+    $user = $this->createUser([
+      'avatars avatar_generator user ' . $generator_2->id(),
+    ]);
+
+    /** @var \Drupal\avatars\AvatarManagerInterface $am */
+    $am = \Drupal::service('avatars.avatar_manager');
+    $avatar_preview = $am->findValidAvatar($user);
+    $file = $avatar_preview->getAvatar();
+
+    $this->assertIdentical($avatar_preview->id(), $am->getAvatarPreviewByFile($file));
+  }
+
+  /**
+   * Tests whether a file is not matched with an avatar preview.
+   *
+   * Tests AvatarManagerInterface::getAvatarPreviewByFile()
+   */
+  public function testFileNotAvatarPreview() {
+    $generator_2 = AvatarGenerator::create([
+      'label' => $this->randomMachineName(),
+      'id' => $this->randomMachineName(),
+      'plugin' => 'avatars_test_static',
+    ]);
+    $generator_2
+      ->setStatus(TRUE)
+      ->save();
+
+    $user = $this->createUser([
+      'avatars avatar_generator user ' . $generator_2->id(),
+    ]);
+
+
+    /** @var \Drupal\avatars\AvatarManagerInterface $am */
+    $am = \Drupal::service('avatars.avatar_manager');
+
+    // Create a random file.
+    $file = file_save_data($this->randomString());
+
+    $this->assertFalse($am->getAvatarPreviewByFile($file));
+  }
+
 }

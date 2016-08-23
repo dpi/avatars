@@ -1,7 +1,7 @@
 services:
   avatars.avatar_manager:
     class: Drupal\avatars\AvatarManager
-    arguments: ['@config.factory', '@http_client', '@cache_tags.invalidator', '@logger.factory', '@entity_type.manager', '@plugin.manager.avatar_generator']
+    arguments: ['@config.factory', '@http_client', '@cache_tags.invalidator', '@logger.factory', '@entity_type.manager', '@file.usage', '@plugin.manager.avatar_generator']
     parent: container.trait
   plugin.manager.avatar_generator:
     class: Drupal\avatars\AvatarGeneratorPluginManager

@@ -176,8 +176,8 @@ class AvatarPreview extends ContentEntityBase implements AvatarPreviewInterface 
 
     if (!$update && $this->getAvatar()) {
       /** @var \Drupal\file\FileUsage\FileUsageInterface $file_usage */
-      $file_usage = \Drupal::service('file.usage')
-        ->add($this->getAvatar(), 'avatars', $this->getEntityTypeId(), $this->id());
+      $file_usage = \Drupal::service('file.usage');
+      $file_usage->add($this->getAvatar(), 'avatars', $this->getEntityTypeId(), $this->id());
     }
   }
 
