@@ -8,6 +8,7 @@
 namespace Drupal\avatars;
 
 use Drupal\user\UserInterface;
+use Drupal\file\FileInterface;
 
 /**
  * Provides an interface to the avatar manager service.
@@ -122,5 +123,17 @@ interface AvatarManagerInterface {
    *   An array of avatar generator entities.
    */
   function getAvatarGeneratorsForUser(UserInterface $user, $exclude_user_preference = TRUE);
+
+  /**
+   * Determines if a file entity is an avatar preview.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file entity to check.
+   *
+   * @return int|FALSE
+   *   Returns the avatar preview entity ID, or FALSE if the file is not a
+   *   avatar preview.
+   */
+  function getAvatarPreviewByFile(FileInterface $file);
 
 }

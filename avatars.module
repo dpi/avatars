@@ -132,20 +132,17 @@ function avatars_entity_update(EntityInterface $entity) {
 
 /**
  * Implements hook_ENTITY_TYPE_storage_load().
+ *
+ * Add cache tags to avatar preview files. These tags will be added when image
+ * formatters are rendered.
  */
 function avatars_file_storage_load(array $entities) {
   /** @var $entities \Drupal\file\FileInterface[] */
-  $avatar_preview_storage = \Drupal::entityManager()
-    ->getStorage('avatars_preview');
+  /** @var \Drupal\avatars\AvatarManager $avatar_manager */
+  $avatar_manager = \Drupal::service('avatars.avatar_manager');
 
-  // Add cache tags to avatar preview files. These tags will be added when image
-  // formatters are rendered.
   foreach ($entities as $file) {
-    $avatar_previews = $avatar_preview_storage->loadByProperties([
-      'avatar' => $file->id(),
-    ]);
-    if ($avatar_preview = reset($avatar_previews)) {
-      /** @var AvatarPreviewInterface $avatar_preview */
+    if (FALSE !== $avatar_manager->getAvatarPreviewByFile($file)) {
       $file->addCacheTags(['avatar_preview']);
     }
   }

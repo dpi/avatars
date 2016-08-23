@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
 use GuzzleHttp\ClientInterface;
@@ -56,6 +57,13 @@ class AvatarManager implements AvatarManagerInterface {
   protected $loggerFactory;
 
   /**
+   * The file usage service
+   *
+   * @var \Drupal\file\FileUsage\FileUsageInterface
+   */
+  protected $fileUsage;
+
+  /**
    * Storage for avatar generator storage entities.
    *
    * @var \Drupal\avatars\AvatarGeneratorStorageInterface
@@ -82,16 +90,19 @@ class AvatarManager implements AvatarManagerInterface {
    *   The logger channel factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\file\FileUsage\FileUsageInterface $file_usage
+   *   The file usage service.
    * @param \Drupal\avatars\AvatarGeneratorPluginManagerInterface $avatar_generator
    *   The avatar generator plugin manager.
    */
-  function __construct(ConfigFactoryInterface $config_factory, ClientInterface $http_client, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, AvatarGeneratorPluginManagerInterface $avatar_generator) {
+  function __construct(ConfigFactoryInterface $config_factory, ClientInterface $http_client, CacheTagsInvalidatorInterface $cache_tag_invalidator, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, FileUsageInterface $file_usage, AvatarGeneratorPluginManagerInterface $avatar_generator) {
     $this->configFactory = $config_factory;
     $this->httpClient = $http_client;
     $this->cacheTagInvalidator = $cache_tag_invalidator;
     $this->loggerFactory = $logger_factory;
     $this->avatarGeneratorStorage = $entity_type_manager
       ->getStorage('avatar_generator');
+    $this->fileUsage = $file_usage;
     $this->avatarGenerator = $avatar_generator;
   }
 
@@ -189,10 +200,19 @@ class AvatarManager implements AvatarManagerInterface {
     if (!$file && $url = $plugin->generateUri($user)) {
       $directory = 'public://avatar_kit/' . $avatar_generator->id();
       if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
+//        throw new \Exception(drupal_realpath($directory));
+//        debug($url);
+//        debug(getenv('SIMPLETEST_BASE_URL'));
+        debug(\Drupal\Core\Url::fromRoute('avatars_test.image', [], ['absolute' => TRUE])
+          ->toString());
         try {
           if (($result = $this->httpClient->get($url)) && ($result->getStatusCode() == 200)) {
+            debug($result);
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
+          }
+          else {
+            throw new \Exception('wutface.');
           }
         }
         catch (ClientException $e) {
@@ -200,6 +220,7 @@ class AvatarManager implements AvatarManagerInterface {
           return FALSE;
         }
         catch (\Exception $e) {
+          debug('xx' . $e->getMessage());
           $this->loggerFactory
             ->get('avatars')
             ->error($this->t('Failed to get @id avatar for @generator: %exception', [
@@ -209,6 +230,9 @@ class AvatarManager implements AvatarManagerInterface {
             ]));
           return FALSE;
         }
+      }
+      else {
+        throw new \Exception('Cannot create avatar kit directory.');
       }
     }
 
@@ -276,6 +300,21 @@ class AvatarManager implements AvatarManagerInterface {
       $avatar_generators[] = $avatar_generator;
     }
     return $avatar_generators;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function getAvatarPreviewByFile(FileInterface $file) {
+    $usages = $this->fileUsage->listUsage($file);
+
+    if (isset($usages['avatars']['avatars_preview'])) {
+      $avatar_previews = array_keys($usages['avatars']['avatars_preview']);
+      // Return the first key, there should only ever be one.
+      return reset($avatar_previews);
+    }
+
+    return FALSE;
   }
 
 }

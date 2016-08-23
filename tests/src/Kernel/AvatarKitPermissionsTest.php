@@ -19,8 +19,7 @@ class AvatarKitPermissionsTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['avatars', 'user', 'avatars_test', 'system'];
-
+  public static $modules = ['avatars', 'user', 'avatars_test', 'system', 'file'];
 
   /**
    * The permissions handler
