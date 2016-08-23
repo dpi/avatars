@@ -89,7 +89,7 @@ class AvatarKitGeneratorTest extends AvatarKitWebTestBase {
     $avatar_preview = $am->findValidAvatar($user);
     $file = $avatar_preview->getAvatar();
 
-    $this->assertIdentical($avatar_preview->id(), $am->getAvatarPreviewByFile($file));
+    $this->assertEqual($avatar_preview->id(), $am->getAvatarPreviewByFile($file));
   }
 
   /**
