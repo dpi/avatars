@@ -200,19 +200,10 @@ class AvatarManager implements AvatarManagerInterface {
     if (!$file && $url = $plugin->generateUri($user)) {
       $directory = 'public://avatar_kit/' . $avatar_generator->id();
       if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
-//        throw new \Exception(drupal_realpath($directory));
-//        debug($url);
-//        debug(getenv('SIMPLETEST_BASE_URL'));
-        debug(\Drupal\Core\Url::fromRoute('avatars_test.image', [], ['absolute' => TRUE])
-          ->toString());
         try {
           if (($result = $this->httpClient->get($url)) && ($result->getStatusCode() == 200)) {
-            debug($result);
             $file_path = $directory . '/' . $user->id() . '.jpg';
             $file = file_save_data($result->getBody(), $file_path, FILE_EXISTS_REPLACE);
-          }
-          else {
-            throw new \Exception('wutface.');
           }
         }
         catch (ClientException $e) {
@@ -220,7 +211,6 @@ class AvatarManager implements AvatarManagerInterface {
           return FALSE;
         }
         catch (\Exception $e) {
-          debug('xx' . $e->getMessage());
           $this->loggerFactory
             ->get('avatars')
             ->error($this->t('Failed to get @id avatar for @generator: %exception', [
