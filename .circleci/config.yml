@@ -26,4 +26,4 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
         
       - run: vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
-      - run: vendor/bin/phpcs --standard=Drupal -n src tests
+      - run: vendor/bin/phpcs --standard=Drupal -n src
