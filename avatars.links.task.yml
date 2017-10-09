@@ -1,0 +1,19 @@
+avatars.config.services:
+  route_name: avatars.config.services
+  title: 'Services'
+  base_route: avatars.config.services
+
+avatars.config.settings:
+  route_name: avatars.config.settings
+  title: 'Settings'
+  base_route: avatars.config.services
+
+entity.avatars_service.edit_form:
+  title: 'Edit'
+  route_name: entity.avatars_service.edit_form
+  base_route: entity.avatars_service.edit_form
+
+entity.avatars_service.delete_form:
+  title: 'Delete'
+  route_name: entity.avatars_service.delete_form
+  base_route: entity.avatars_service.edit_form

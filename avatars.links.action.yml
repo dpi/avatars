@@ -1,0 +1,5 @@
+entity.avatars_service.add_form:
+  route_name: entity.avatars_service.add_form
+  title: 'Add Service'
+  appears_on:
+    - avatars.config.services

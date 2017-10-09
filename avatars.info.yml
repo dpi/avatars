@@ -1,0 +1,15 @@
+name: Avatar Kit
+type: module
+description: Provides dynamic avatars for users.
+core: 8.x
+package: Avatar Kit
+php: 7.1
+configure: avatars.config
+dependencies:
+  - drupal:system (>=8.4.x)
+  - drupal:field
+  - drupal:file
+  - drupal:image
+  - drupal:options
+  - drupal:user
+  - unlimited_number:unlimited_number

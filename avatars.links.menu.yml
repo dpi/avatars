@@ -1,0 +1,5 @@
+avatars.config:
+  title: 'Avatar settings'
+  parent: user.admin_index
+  description: 'Manage Avatar Kit settings.'
+  route_name: avatars.config.services

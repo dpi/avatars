@@ -1,0 +1,22 @@
+avatars.service.*:
+  type: config_entity
+  label: 'Avatar Service configuration'
+  mapping:
+    id:
+      type: string
+      label: 'Unique identifier'
+    label:
+      type: label
+      label: 'User friendly label.'
+    weight:
+      type: integer
+      label: 'Fallback weight'
+    plugin:
+      type: string
+      label: 'ID of avatar service plugin'
+    settings:
+      type: avatars.avatar_service.settings.[%parent.plugin]
+
+avatars.avatar_service.settings.*:
+  type: mapping
+  mapping: []

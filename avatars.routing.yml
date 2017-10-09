@@ -1,0 +1,15 @@
+avatars.config.services:
+  path: '/admin/config/people/avatars/services'
+  defaults:
+    _form: '\Drupal\avatars\Form\AvatarKitServicesForm'
+    _title: 'Avatar Kit services'
+  requirements:
+    _permission: 'administer avatars'
+
+avatars.config.settings:
+  path: '/admin/config/people/avatars/settings'
+  defaults:
+    _form: '\Drupal\avatars\Form\AvatarKitSettingsForm'
+    _title: 'Avatar Kit settings'
+  requirements:
+    _permission: 'administer avatars'

@@ -1,0 +1,24 @@
+{
+  "name": "drupal/avatars",
+  "type": "drupal-module",
+  "description": "Provides dynamic avatars for users.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/avatars",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/avatars",
+    "source": "http://cgit.drupalcode.org/avatars"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "dpi/ak": "^1@dev"
+  },
+  "require-dev": {
+    "drupal/coder": "^8.2.12",
+    "phpunit/phpunit": "5",
+    "squizlabs/php_codesniffer": "^2.7"
+  }
+}
