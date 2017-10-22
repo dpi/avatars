@@ -8,6 +8,13 @@ services:
   avatars.avatar_kit.factory.services:
     class: dpi\ak\AvatarServiceFactory
     arguments: ['@avatars.avatar_kit.discovery.services']
+  avatars.entity_preference:
+    class: Drupal\avatars\AvatarKitEntityPreferenceManager
+    arguments: ['@event_dispatcher', '@entity_type.manager']
+  avatars.entity_preference.default_subscriber:
+    class: Drupal\avatars\EventSubscriber\AvatarKitDefaultPreferenceSubscriber
+    tags:
+      - { name: event_subscriber }
   avatars.utility.download:
     class: Drupal\avatars\AvatarKitDownloadUtility
     arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']
