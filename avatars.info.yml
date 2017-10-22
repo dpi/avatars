@@ -12,4 +12,5 @@ dependencies:
   - drupal:image
   - drupal:options
   - drupal:user
+  - dynamic_entity_reference:dynamic_entity_reference (>=1.x)
   - unlimited_number:unlimited_number
