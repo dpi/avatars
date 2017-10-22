@@ -4,13 +4,44 @@ namespace Drupal\avatars\Form;
 
 use Drupal\avatars\Entity\AvatarKitService;
 use Drupal\avatars\Entity\AvatarKitServiceInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure Avatar Kit services.
  */
 class AvatarKitServicesForm extends ConfigFormBase {
+
+  /**
+   * The avatar service preference cache backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $preferenceCacheBackend;
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Cache\CacheBackendInterface $preferenceCacheBackend
+   *   The avatar service preference cache backend.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $preferenceCacheBackend) {
+    parent::__construct($config_factory);
+    $this->preferenceCacheBackend = $preferenceCacheBackend;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('cache.avatars.entity_preference')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -90,6 +121,9 @@ class AvatarKitServicesForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) : void {
     parent::submitForm($form, $form_state);
+
+    // Invalidate cached preferences for entities.
+    $this->preferenceCacheBackend->invalidateAll();
 
     // Generators are already sorted correctly.
     foreach ($form_state->getValue('services') as $id => $row) {

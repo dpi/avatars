@@ -1,4 +1,10 @@
 services:
+  cache.avatars.entity_preference:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [avatars_entity_preference]
   plugin.manager.avatars_services:
     class: Drupal\avatars\AvatarKitServicePluginManager
     parent: default_plugin_manager
@@ -10,7 +16,7 @@ services:
     arguments: ['@avatars.avatar_kit.discovery.services']
   avatars.entity_preference:
     class: Drupal\avatars\AvatarKitEntityPreferenceManager
-    arguments: ['@event_dispatcher', '@entity_type.manager']
+    arguments: ['@event_dispatcher', '@entity_type.manager', '@cache.avatars.entity_preference']
   avatars.entity_preference.default_subscriber:
     class: Drupal\avatars\EventSubscriber\AvatarKitDefaultPreferenceSubscriber
     tags:

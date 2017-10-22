@@ -4,6 +4,7 @@ namespace Drupal\avatars;
 
 use Drupal\avatars\Event\AvatarKitEvents;
 use Drupal\avatars\Event\EntityServicePreferenceEvent;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -28,23 +29,39 @@ class AvatarKitEntityPreferenceManager implements AvatarKitEntityPreferenceManag
   protected $serviceStorage;
 
   /**
+   * The avatar service preference cache backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $preferenceCacheBackend;
+
+  /**
    * Creates a new AvatarKitEntityPreferenceManager object.
    *
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $preferenceCacheBackend
+   *   The avatar service preference cache backend.
    */
-  public function __construct(EventDispatcherInterface $eventDispatcher, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EventDispatcherInterface $eventDispatcher, EntityTypeManagerInterface $entityTypeManager, CacheBackendInterface $preferenceCacheBackend) {
     $this->eventDispatcher = $eventDispatcher;
     $this->serviceStorage = $entityTypeManager->getStorage('avatars_service');
+    $this->preferenceCacheBackend = $preferenceCacheBackend;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPreferences(EntityInterface $entity) : array {
-    // @todo preferences should be cached per entity.
+    $preference_cache_id = $entity->getEntityTypeId() . ':' . $entity->id();
+    $cache_item = $this->preferenceCacheBackend
+      ->get($preference_cache_id);
+    if ($cache_item !== FALSE) {
+      return $cache_item->data;
+    }
+
     $services = $this->serviceStorage
       ->loadMultiple();
 
@@ -63,6 +80,9 @@ class AvatarKitEntityPreferenceManager implements AvatarKitEntityPreferenceManag
 
     // Strip out the weights, leaving only service ID's in sorted order.
     $service_ids = array_keys($services);
+
+    $this->preferenceCacheBackend
+      ->set($preference_cache_id, $service_ids);
 
     return $service_ids;
   }
