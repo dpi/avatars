@@ -23,8 +23,10 @@ class AvatarKitServicesForm extends ConfigFormBase {
   protected $preferenceCacheBackend;
 
   /**
-   * {@inheritdoc}
+   * Construct a new AvatarKitServicesForm object.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    * @param \Drupal\Core\Cache\CacheBackendInterface $preferenceCacheBackend
    *   The avatar service preference cache backend.
    */
