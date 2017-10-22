@@ -13,11 +13,11 @@ use Symfony\Component\EventDispatcher\Event;
 class EntityServicePreferenceEvent extends Event {
 
   /**
-   * An array of avatar service entity ID's keyed by weight integer.
+   * An array of weights keyed by avatar service entity ID's.
    *
-   * Lower value keys are higher priority.
+   * Lower value weights are higher priority.
    *
-   * @var string[]
+   * @var int[]
    */
   protected $services;
 
@@ -29,20 +29,20 @@ class EntityServicePreferenceEvent extends Event {
   protected $entity;
 
   /**
-   * Get avatar service entity ID's.
+   * Get weights for avatar services.
    *
    * @return string[]
-   *   An array of avatar service entity ID's keyed by weight integer.
+   *   An array of weights keyed by avatar service entity ID's.
    */
   public function getServices(): array {
     return $this->services;
   }
 
   /**
-   * Set array of avatar service entity ID's.
+   * Sets weights for avatar services.
    *
    * @param string[] $services
-   *   An array of avatar service entity ID's keyed by weight integer.
+   *   An array of weights keyed by avatar service entity ID's.
    *
    * @return $this
    *   Returns this event for chaining.
