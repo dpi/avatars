@@ -10,3 +10,7 @@ services:
   avatars.avatar_kit.factory.services:
     class: dpi\ak\AvatarServiceFactory
     arguments: ['@avatars.avatar_kit.discovery.services']
+
+  avatars.utility.download:
+    class: Drupal\avatars\AvatarKitDownloadUtility
+    arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']
