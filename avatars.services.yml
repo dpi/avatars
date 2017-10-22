@@ -18,3 +18,6 @@ services:
   avatars.utility.download:
     class: Drupal\avatars\AvatarKitDownloadUtility
     arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']
+  logger.channel.avatars:
+    parent: logger.channel_base
+    arguments: ['avatars']
