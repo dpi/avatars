@@ -139,7 +139,7 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
   /**
    * Abstraction of file_unmanaged_move.
    *
-   * @param array ...$args
+   * @param array ...
    *   Arguments to pass to file_unmanaged_move().
    *
    * @see \file_unmanaged_move();
@@ -148,7 +148,7 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
    *   The path to the new file.
    *
    * @throws \Exception
-   * , Throws exception in the event of an error.
+   *   Throws exception in the event of an error.
    */
   protected function moveFile(...$args) : string {
     $result = \file_unmanaged_move(...$args);

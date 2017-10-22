@@ -2,15 +2,12 @@ services:
   plugin.manager.avatars_services:
     class: Drupal\avatars\AvatarKitServicePluginManager
     parent: default_plugin_manager
-
   avatars.avatar_kit.discovery.services:
     class: Drupal\avatars\AvatarKitAvatarServiceDiscovery
     arguments: ['@class_loader', '@cache.discovery']
-
   avatars.avatar_kit.factory.services:
     class: dpi\ak\AvatarServiceFactory
     arguments: ['@avatars.avatar_kit.discovery.services']
-
   avatars.utility.download:
     class: Drupal\avatars\AvatarKitDownloadUtility
     arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']
