@@ -101,11 +101,10 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
       return NULL;
     }
 
-    $path_info = pathinfo($default_filename);
-    $final_filename = $path_info['filename'] . '.' . $this->getExtension($response);
+    ['dirname' => $directory, 'filename' => $filename] = pathinfo($default_filename);
+    $final_filename = $directory . DIRECTORY_SEPARATOR . $filename . '.' . $this->getExtension($response);
 
     // Create destination directory if it doesn't exist.
-    $directory = dirname($final_filename);
     if (file_prepare_directory($directory, FILE_CREATE_DIRECTORY) !== TRUE) {
       $this->logger->notice('Unable to create directory: %directory.', ['%directory' => $directory]);
       return NULL;
