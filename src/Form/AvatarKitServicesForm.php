@@ -80,6 +80,7 @@ class AvatarKitServicesForm extends ConfigFormBase {
           'group' => $table_drag_group,
         ],
       ],
+      '#default_value' => [],
     ];
 
     /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface[] $instances */
