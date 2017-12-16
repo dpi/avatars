@@ -34,6 +34,7 @@ use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface as AvatarKit
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },
+ *     "storage" = "Drupal\avatars\Entity\AvatarKitServiceStorage",
  *   },
  *   links = {
  *     "add-form" = "/admin/config/people/avatars/services/add",
