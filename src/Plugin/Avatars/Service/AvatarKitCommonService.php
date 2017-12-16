@@ -132,11 +132,13 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     $form['width'] = [
       '#title' => $this->t('Source width'),
       '#type' => 'number',
+      '#default_value' => $this->configuration['width'] ?? NULL,
     ];
 
     $form['height'] = [
       '#title' => $this->t('Source height'),
       '#type' => 'number',
+      '#default_value' => $this->configuration['height'] ?? NULL,
     ];
 
     return parent::buildConfigurationForm($form, $form_state);

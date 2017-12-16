@@ -44,7 +44,7 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
 
     // Replace existing values, if any, with new file.
     $field_item_list->setValue([$file]);
-    $destination->save();
+    $entity->save();
   }
 
 }

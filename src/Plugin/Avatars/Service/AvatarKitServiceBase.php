@@ -3,6 +3,7 @@
 namespace Drupal\avatars\Plugin\Avatars\Service;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -28,7 +29,10 @@ abstract class AvatarKitServiceBase extends PluginBase implements AvatarKitServi
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) : void {
-    $this->configuration = $configuration;
+    $this->configuration = NestedArray::mergeDeep(
+      $this->defaultConfiguration(),
+      $configuration
+    );
   }
 
   /**
