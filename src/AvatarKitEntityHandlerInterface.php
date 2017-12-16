@@ -1,0 +1,41 @@
+<?php
+
+namespace Drupal\avatars;
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\avatars\Entity\AvatarCacheInterface;
+
+/**
+ * Downloads and caches avatars into entities.
+ */
+interface AvatarKitEntityHandlerInterface {
+
+  /**
+   * Find the first valid avatar for an entity.
+   *
+   * Downloads and caches avatars for a user until first success.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get the first avatar for this entity.
+   *
+   * @return \Drupal\avatars\Entity\AvatarCacheInterface
+   *   An avatar cache entity.
+   */
+  public function findFirst(EntityInterface $entity): AvatarCacheInterface;
+
+  /**
+   * Iterates through all avatar services for a user.
+   *
+   * Downloads and caches the avatar locally, then produces an avatar cache
+   * for each.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get the avatars for this entity.
+   *
+   * @return \Generator|\Drupal\avatars\Entity\AvatarCacheInterface[]
+   *   A generator where keys are service plugin ID's and values are avatar
+   *   cache entities.
+   */
+  public function findAll(EntityInterface $entity): \Generator;
+
+}

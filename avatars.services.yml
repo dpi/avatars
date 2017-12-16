@@ -21,6 +21,9 @@ services:
     class: Drupal\avatars\EventSubscriber\AvatarKitDefaultPreferenceSubscriber
     tags:
       - { name: event_subscriber }
+  avatars.entity:
+    class: Drupal\avatars\AvatarKitEntityHandler
+    arguments: ['@entity_type.manager', '@avatars.local_cache', '@avatars.entity_preference']
   avatars.utility.download:
     class: Drupal\avatars\AvatarKitDownloadUtility
     arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']
