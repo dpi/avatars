@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\avatars;
 
 use dpi\ak\AvatarIdentifierInterface;

@@ -88,6 +88,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
   }
 
   /**
+   * Create a service instance.
    *
    * @return \dpi\ak\AvatarKit\AvatarServices\AvatarServiceInterface
    *   A new service instance

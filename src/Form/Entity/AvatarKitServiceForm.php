@@ -101,6 +101,9 @@ class AvatarKitServiceForm extends EntityForm {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
     /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface $instance */
@@ -111,7 +114,6 @@ class AvatarKitServiceForm extends EntityForm {
       $plugin->validateConfigurationForm($form['plugin_configuration'], $subform_state);
     }
   }
-
 
   /**
    * {@inheritdoc}
