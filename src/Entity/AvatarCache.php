@@ -5,6 +5,7 @@ namespace Drupal\avatars\Entity;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\file\FileInterface;
 
 /**
  * Defines the Avatar cache entity.
@@ -26,6 +27,20 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAvatarServiceId(): string {
+    return $this->bundle();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAvatar(): ?FileInterface {
+    return $this->get('avatar')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -43,9 +58,8 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
       ->setRequired(FALSE);
 
     // @see \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem
-    $fields['avatar'] = BaseFieldDefinition::create('entity_reference')
+    $fields['avatar'] = BaseFieldDefinition::create('file')
       ->setLabel(t('Reference to a file entity containing an image.'))
-      ->setSetting('target_type', 'file')
       ->setCardinality(1)
       ->setRequired(FALSE);
 
