@@ -2,6 +2,8 @@
 
 namespace Drupal\avatars\Plugin\Avatars\Service;
 
+use dpi\ak\AvatarIdentifier;
+use dpi\ak\AvatarIdentifierInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
@@ -58,5 +60,12 @@ abstract class AvatarKitServiceBase extends PluginBase implements AvatarKitServi
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) : void {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createIdentifier(): AvatarIdentifierInterface {
+    return new AvatarIdentifier();
+  }
 
 }
