@@ -45,6 +45,7 @@ class AvatarKitServiceForm extends EntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) : array {
+    /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface $instance */
     $instance = $this->getEntity();
     $is_new = $instance->isNew();
 
@@ -100,10 +101,30 @@ class AvatarKitServiceForm extends EntityForm {
     return parent::buildForm($form, $form_state);
   }
 
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface $instance */
+    $instance = $this->getEntity();
+    $plugin = $instance->getPlugin();
+    if ($plugin) {
+      $subform_state = SubformState::createForSubform($form['plugin_configuration'], $form, $form_state);
+      $plugin->validateConfigurationForm($form['plugin_configuration'], $subform_state);
+    }
+  }
+
+
   /**
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) : int {
+    /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface $instance */
+    $instance = $this->getEntity();
+    $plugin = $instance->getPlugin();
+    if ($plugin) {
+      $subform_state = SubformState::createForSubform($form['plugin_configuration'], $form, $form_state);
+      $plugin->submitConfigurationForm($form['plugin_configuration'], $subform_state);
+    }
+
     $status = parent::save($form, $form_state);
 
     if ($status === SAVED_NEW) {

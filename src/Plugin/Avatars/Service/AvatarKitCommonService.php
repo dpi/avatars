@@ -3,7 +3,9 @@
 namespace Drupal\avatars\Plugin\Avatars\Service;
 
 use dpi\ak\Annotation\AvatarService;
+use dpi\ak\AvatarConfiguration;
 use dpi\ak\AvatarConfigurationInterface;
+use dpi\ak\AvatarIdentifierInterface;
 use dpi\ak\AvatarKit\AvatarServices\AvatarServiceInterface;
 use dpi\ak\AvatarServiceDiscoveryInterface;
 use dpi\ak\AvatarServiceFactoryInterface;
@@ -86,6 +88,28 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
   }
 
   /**
+   *
+   * @return \dpi\ak\AvatarKit\AvatarServices\AvatarServiceInterface
+   *   A new service instance
+   */
+  protected function getService() {
+    $configuration = new AvatarConfiguration();
+
+    $width = $this->configuration['width'] ?? NULL;
+    if (is_int($width)) {
+      $configuration->setWidth($width);
+    }
+
+    $height = $this->configuration['height'] ?? NULL;
+    if (is_int($height)) {
+      $configuration->setHeight($height);
+    }
+
+    $configuration->setProtocol('https');
+    return $this->createService($configuration);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) : array {
@@ -116,6 +140,15 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     ];
 
     return parent::buildConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
+    parent::submitConfigurationForm($form, $form_state);
+    $this->configuration['width'] = $form_state->getValue('width');
+    $this->configuration['height'] = $form_state->getValue('height');
   }
 
   /**

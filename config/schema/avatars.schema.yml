@@ -20,3 +20,11 @@ avatars.service.*:
 avatars.avatar_service.settings.*:
   type: mapping
   mapping: []
+
+avatars.avatar_service_common_base:
+  type: mapping
+  mapping:
+    width:
+      type: integer
+    height:
+      type: integer
