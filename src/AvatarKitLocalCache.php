@@ -112,11 +112,11 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * {@inheritdoc}
    */
-  public function invalidateCaches(EntityInterface $entity_before, EntityInterface $entity_after): void {
+  public function invalidateCaches(EntityInterface $entity): void {
     // Get all caches in storage, don't need to worry about preferences or
     // progressively loading each service.
     /** @var \Drupal\avatars\Entity\AvatarCacheInterface[] $caches */
-    $caches = $this->getLocalCaches($entity_after);
+    $caches = $this->getLocalCaches($entity);
 
     foreach ($caches as $cache) {
       $service = $cache->getAvatarService();
@@ -128,9 +128,9 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
         continue;
       }
 
-      $identifier_before = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity_before);
-      $identifier_after = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity_after);
-      if ($identifier_before->getHashed() !== $identifier_after->getHashed()) {
+      $identifier = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity);
+      if ($cache->getIdentifier() !== $identifier->getHashed()) {
+        // @todo log?
         $cache->delete();
       }
     }

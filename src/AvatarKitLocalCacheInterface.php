@@ -54,11 +54,9 @@ interface AvatarKitLocalCacheInterface {
    *
    * Used when an entity is modified.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity_before
-   *   The entity before any modifications.
-   * @param \Drupal\Core\Entity\EntityInterface $entity_after
-   *   The entity after any modifications.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to invalidate.
    */
-  public function invalidateCaches(EntityInterface $entity_before, EntityInterface $entity_after): void;
+  public function invalidateCaches(EntityInterface $entity): void;
 
 }
