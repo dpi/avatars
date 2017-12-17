@@ -86,6 +86,8 @@ class AvatarKitServiceForm extends EntityForm {
       ];
     }
 
+    $form['plugin_configuration'] = [];
+
     $plugin = $instance->getPlugin();
     if ($plugin) {
       $form['plugin_configuration'] = [
