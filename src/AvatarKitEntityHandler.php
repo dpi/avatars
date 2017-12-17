@@ -52,7 +52,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   /**
    * {@inheritdoc}
    */
-  public function findFirst(EntityInterface $entity): AvatarCacheInterface {
+  public function findFirst(EntityInterface $entity): ?AvatarCacheInterface {
     $all = $this->findAll($entity);
     $current = $all->current();
     return $current;

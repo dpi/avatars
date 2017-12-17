@@ -18,10 +18,11 @@ interface AvatarKitEntityHandlerInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Get the first avatar for this entity.
    *
-   * @return \Drupal\avatars\Entity\AvatarCacheInterface
-   *   An avatar cache entity.
+   * @return \Drupal\avatars\Entity\AvatarCacheInterface|null
+   *   An avatar cache entity, or NULL if no avatars could be generated for this
+   *   entity.
    */
-  public function findFirst(EntityInterface $entity): AvatarCacheInterface;
+  public function findFirst(EntityInterface $entity): ?AvatarCacheInterface;
 
   /**
    * Iterates through all avatar services for a user.
