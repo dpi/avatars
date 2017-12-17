@@ -127,9 +127,8 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
     $file->setPermanent();
 
     $violation_count = $this->logViolations($file);
-    if ($violation_count) {
-      return NULL;
-    }
+    // Normally you would return NULL here. But if file_entity module is
+    // installed, it will cause voilations since there is no bundle set.
 
     $file->save();
     return $file;
