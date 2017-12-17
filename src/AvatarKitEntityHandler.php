@@ -69,7 +69,9 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       // Check if the avatar for this entity service already exists.
       $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
       if ($cache) {
-        yield $service_id => $cache;
+        if ($cache->getAvatar()) {
+          yield $service_id => $cache;
+        }
         continue;
       }
 
@@ -80,7 +82,9 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
 
       // If the avatar was downloaded and saved to a cache successfully.
       if ($cache) {
-        yield $service_id => $cache;
+        if ($cache->getAvatar()) {
+          yield $service_id => $cache;
+        }
         continue;
       }
     }
