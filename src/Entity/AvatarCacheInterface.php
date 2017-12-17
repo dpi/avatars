@@ -31,4 +31,12 @@ interface AvatarCacheInterface extends ContentEntityInterface {
    */
   public function getAvatar(): ?FileInterface;
 
+  /**
+   * Get the identifier used to generate the avatar.
+   *
+   * @return string
+   *   The identifier used to generate the avatar.
+   */
+  public function getIdentifier(): string;
+
 }

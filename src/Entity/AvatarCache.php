@@ -48,6 +48,13 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
   /**
    * {@inheritdoc}
    */
+  public function getIdentifier(): string {
+    return $this->get('identifier')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
