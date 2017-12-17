@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -95,6 +96,44 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
     // @todo ensure usage entry is created.
 
     return $avatar_cache;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLocalCaches(EntityInterface $entity): array {
+    $ids = $this->avatarCacheStorage->getQuery()
+      ->condition('entity__target_id', $entity->id())
+      ->condition('entity__target_type', $entity->getEntityTypeId())
+      ->execute();
+    return $this->avatarCacheStorage->loadMultiple($ids);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function invalidateCaches(EntityInterface $entity_before, EntityInterface $entity_after): void {
+    // Get all caches in storage, don't need to worry about preferences or
+    // progressively loading each service.
+    /** @var \Drupal\avatars\Entity\AvatarCacheInterface[] $caches */
+    $caches = $this->getLocalCaches($entity_after);
+
+    foreach ($caches as $cache) {
+      $service = $cache->getAvatarService();
+      if (!$service) {
+        continue;
+      }
+      $service_plugin = $service->getPlugin();
+      if (!$service_plugin) {
+        continue;
+      }
+
+      $identifier_before = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity_before);
+      $identifier_after = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity_after);
+      if ($identifier_before->getHashed() !== $identifier_after->getHashed()) {
+        $cache->delete();
+      }
+    }
   }
 
   /**

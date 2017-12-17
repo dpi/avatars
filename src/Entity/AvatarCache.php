@@ -27,6 +27,13 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAvatarService(): ?AvatarKitServiceInterface {
+    return AvatarKitService::load($this->bundle());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getAvatarServiceId(): string {
     return $this->bundle();
   }

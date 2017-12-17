@@ -4,3 +4,17 @@
  * @file
  * Contains hooks for Avatar Kit.
  */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_update().
+ */
+function avatars_entity_update(EntityInterface $entity) {
+  $original = $entity->original ?? NULL;
+  if ($original) {
+    /** @var \Drupal\avatars\AvatarKitLocalCacheInterface $localCache */
+    $localCache = \Drupal::service('avatars.local_cache');
+    $localCache->invalidateCaches($original, $entity);
+  }
+}

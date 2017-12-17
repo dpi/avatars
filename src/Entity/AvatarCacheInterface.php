@@ -11,6 +11,11 @@ use Drupal\file\FileInterface;
 interface AvatarCacheInterface extends ContentEntityInterface {
 
   /**
+   * Get the avatar service plugin entity.
+   */
+  public function getAvatarService(): ?AvatarKitServiceInterface;
+
+  /**
    * Get the avatar service plugin ID.
    *
    * @return string

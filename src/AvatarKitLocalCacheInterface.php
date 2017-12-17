@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Cache remote files locally into file entities.
@@ -37,5 +38,27 @@ interface AvatarKitLocalCacheInterface {
    *   file is cached.
    */
   public function localCache(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier): ?AvatarCacheInterface;
+
+  /**
+   * Get all caches in storage for an entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get avatar caches for this entity.
+   *
+   * @return \Drupal\avatars\Entity\AvatarCacheInterface[]
+   */
+  public function getLocalCaches(EntityInterface $entity): array;
+
+  /**
+   * Determines if caches for an entity need to be invalidated.
+   *
+   * Used when an entity is modified.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity_before
+   *   The entity before any modifications.
+   * @param \Drupal\Core\Entity\EntityInterface $entity_after
+   *   The entity after any modifications.
+   */
+  public function invalidateCaches(EntityInterface $entity_before, EntityInterface $entity_after): void;
 
 }
