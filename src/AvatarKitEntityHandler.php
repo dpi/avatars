@@ -64,7 +64,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   public function findAll(EntityInterface $entity): \Generator {
     $service_ids = $this->preferenceManager->getPreferences($entity);
     foreach ($this->serviceStorage->loadMultipleGenerator($service_ids) as $service_id => $service_plugin) {
-      $identifier = $this->createIdentifier($service_plugin, $entity);
+      $identifier = $this->createEntityIdentifier($service_plugin, $entity);
 
       // Check if the avatar for this entity service already exists.
       $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
@@ -101,7 +101,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
    * @return \Drupal\avatars\EntityAvatarIdentifierInterface
    *   An identifier object.
    */
-  protected function createIdentifier(AvatarKitServiceInterface $service, EntityInterface $entity) : EntityAvatarIdentifierInterface {
+  public static function createEntityIdentifier(AvatarKitServiceInterface $service, EntityInterface $entity) : EntityAvatarIdentifierInterface {
     $identifier = $service->createIdentifier();
     $new_identifier = new EntityAvatarIdentifierProxy($identifier);
     $new_identifier->setEntity($entity);
