@@ -16,4 +16,11 @@ interface AvatarKitEntityHooksInterface {
    */
   public function update(EntityInterface $entity): void;
 
+  /**
+   * Implements hook_entity_storage_load().
+   *
+   * @see \hook_entity_storage_load()
+   */
+  public function storageLoad(array $entities): void;
+
 }

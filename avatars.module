@@ -8,6 +8,15 @@
 use Drupal\Core\Entity\EntityInterface;
 
 /**
+ * Implements hook_ENTITY_TYPE_storage_load().
+ */
+function avatars_user_storage_load(array $entities): void {
+  /** @var $hookService \Drupal\avatars\AvatarKitEntityHooksInterface */
+  $hookService = \Drupal::service('avatars.hooks');
+  $hookService->storageLoad($entities);
+}
+
+/**
  * Implements hook_entity_update().
  */
 function avatars_entity_update(EntityInterface $entity): void {
