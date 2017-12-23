@@ -19,4 +19,13 @@ final class AvatarKitEvents {
    */
   const ENTITY_SERVICE_PREFERENCE = 'avatars.service_preference.entity';
 
+  /**
+   * Used to alter avatar service plugin definitions.
+   *
+   * @Event
+   *
+   * @see \Drupal\avatars\Event\AvatarKitServiceDefinitionAlterEvent
+   */
+  const PLUGIN_SERVICE_ALTER = 'avatars.service_plugin.info_alter';
+
 }

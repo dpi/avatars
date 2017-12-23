@@ -8,6 +8,9 @@ services:
   plugin.manager.avatars_services:
     class: Drupal\avatars\AvatarKitServicePluginManager
     parent: default_plugin_manager
+    # These arguments are appended to parent arguments.
+    # http://symfony.com/doc/3.4/service_container/parent_services.html#overriding-parent-dependencies
+    arguments: ['@event_dispatcher']
   avatars.avatar_kit.discovery.services:
     class: Drupal\avatars\AvatarKitAvatarServiceDiscovery
     arguments: ['@class_loader', '@cache.discovery']
