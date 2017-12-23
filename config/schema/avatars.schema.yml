@@ -28,3 +28,20 @@ avatars.avatar_service_common_base:
       type: integer
     height:
       type: integer
+
+avatars.entity_mapping.*.*.*:
+  type: config_entity
+  label: 'Avatar Service configuration'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    entity_type:
+      type: string
+      label: 'Entity type'
+    bundle:
+      type: string
+      label: 'Bundle'
+    field_name:
+      type: string
+      label: 'Field name'

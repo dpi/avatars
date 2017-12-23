@@ -3,6 +3,8 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\avatars\Entity\AvatarKitEntityMap;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\file\FileInterface;
 
@@ -32,8 +34,11 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
    * {@inheritdoc}
    */
   public function copyCacheToEntity(FieldableEntityInterface $entity, AvatarCacheInterface $avatar_cache): void {
-    // @todo Allow site builder to set target field.
-    $field_name = 'user_picture';
+    $field_name = $this->getAvatarFieldName($entity);
+    if (!$field_name) {
+      throw new \Exception('Entity does not accept avatars.');
+    }
+
     $file = $avatar_cache->getAvatar();
     $this->pushFileIntoEntity($entity, $field_name, $file);
   }
@@ -42,6 +47,12 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
    * {@inheritdoc}
    */
   public function checkUpdates(FieldableEntityInterface $entity): void {
+    // Don't try to find the first avatar when it doesnt have a target field.
+    $field_name = $this->getAvatarFieldName($entity);
+    if (!$field_name) {
+      return;
+    }
+
     $first = $this->entityHandler->findFirst($entity);
     if ($first) {
       $this->copyCacheToEntity($entity, $first);
@@ -72,6 +83,22 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
     // Replace existing values, if any, with new file.
     $field_item_list->setValue([$file]);
     $entity->save();
+  }
+
+  /**
+   * Get field name for avatars.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get the field name for this entity.
+   *
+   * @return string|null
+   *   The field name, or NULL if no field name is defined.
+   */
+  protected function getAvatarFieldName(EntityInterface $entity) {
+    $entity_type = $entity->getEntityTypeId();
+    $bundle = $entity->bundle();
+    $entity_map = AvatarKitEntityMap::load($entity_type . '.' . $bundle . '.' . 'default');
+    return $entity_map ? $entity_map->getFieldName() : NULL;
   }
 
 }

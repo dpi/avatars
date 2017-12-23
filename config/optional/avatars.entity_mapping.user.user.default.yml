@@ -1,0 +1,7 @@
+dependencies:
+  config:
+    - field.field.user.user.user_picture
+id: user.user.default
+entity_type: user
+bundle: user
+field_name: user_picture

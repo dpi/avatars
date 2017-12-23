@@ -8,9 +8,9 @@
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Implements hook_ENTITY_TYPE_storage_load().
+ * Implements hook_entity_storage_load().
  */
-function avatars_user_storage_load(array $entities): void {
+function avatars_storage_load(array $entities): void {
   /** @var $hookService \Drupal\avatars\AvatarKitEntityHooksInterface */
   $hookService = \Drupal::service('avatars.hooks');
   $hookService->storageLoad($entities);
