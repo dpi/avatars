@@ -133,7 +133,7 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
     try {
       $file->save();
     }
-    catch  (\Exception $e) {
+    catch (\Exception $e) {
       $this->logger->notice('Error saving file: %message.', ['%message' => $e->getMessage()]);
     }
 

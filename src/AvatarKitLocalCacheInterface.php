@@ -46,6 +46,7 @@ interface AvatarKitLocalCacheInterface {
    *   Get avatar caches for this entity.
    *
    * @return \Drupal\avatars\Entity\AvatarCacheInterface[]
+   *   An array of avatar cache entities.
    */
   public function getLocalCaches(EntityInterface $entity): array;
 

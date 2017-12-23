@@ -84,7 +84,7 @@ class AvatarKitEntityHooks implements AvatarKitEntityHooksInterface {
    * @param array $args
    *   An arbitrary array of values to pass to $keyGen and $recur callables.
    */
-  static public function preventRecursion(string $bin, callable $keyGen, callable $recur, array $args): void {
+  public static function preventRecursion(string $bin, callable $keyGen, callable $recur, array $args): void {
     static $static = [];
 
     if (!isset($static[$bin])) {
