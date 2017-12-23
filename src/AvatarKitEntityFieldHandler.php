@@ -12,6 +12,23 @@ use Drupal\file\FileInterface;
 class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterface {
 
   /**
+   * The avatar entity handler.
+   *
+   * @var \Drupal\avatars\AvatarKitEntityHandlerInterface
+   */
+  protected $entityHandler;
+
+  /**
+   * Constructs a new AvatarKitEntityFieldHandler instance.
+   *
+   * @param \Drupal\avatars\AvatarKitEntityHandlerInterface $entityHandler
+   *   The avatar entity handler.
+   */
+  public function __construct(AvatarKitEntityHandlerInterface $entityHandler) {
+    $this->entityHandler = $entityHandler;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function copyCacheToEntity(FieldableEntityInterface $entity, AvatarCacheInterface $avatar_cache): void {
@@ -19,6 +36,16 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
     $field_name = 'user_picture';
     $file = $avatar_cache->getAvatar();
     $this->pushFileIntoEntity($entity, $field_name, $file);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkUpdates(FieldableEntityInterface $entity): void {
+    $first = $this->entityHandler->findFirst($entity);
+    if ($first) {
+      $this->copyCacheToEntity($entity, $first);
+    }
   }
 
   /**
