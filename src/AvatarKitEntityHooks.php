@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 
 /**
  * Drupal entity hooks.
@@ -32,13 +33,18 @@ class AvatarKitEntityHooks implements AvatarKitEntityHooksInterface {
   public function storageLoad(array $entities): void {
     $bin = static::class . '::' . __FUNCTION__;
     foreach ($entities as $entity) {
+      if (!$entity instanceof FieldableEntityInterface) {
+        // If this entity is not fieldable then none of this type are.
+        return;
+      }
+
       $values = [$entity];
       static::preventRecursion(
         $bin,
-        function (EntityInterface $entity): string {
+        function (FieldableEntityInterface $entity): string {
           return $entity->getEntityTypeId() . ':' . $entity->id();
         },
-        function (EntityInterface $entity): void {
+        function (FieldableEntityInterface $entity): void {
           $this->entityFieldHandler()->checkUpdates($entity);
         },
         $values
