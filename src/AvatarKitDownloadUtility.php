@@ -126,11 +126,17 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
     $file->setFileUri($final_filepath);
     $file->setPermanent();
 
-    $violation_count = $this->logViolations($file);
+    // `$violation_count = $this->logViolations($file);`.
     // Normally you would return NULL here. But if file_entity module is
     // installed, it will cause voilations since there is no bundle set.
 
-    $file->save();
+    try {
+      $file->save();
+    }
+    catch  (\Exception $e) {
+      $this->logger->notice('Error saving file: %message.', ['%message' => $e->getMessage()]);
+    }
+
     return $file;
   }
 
