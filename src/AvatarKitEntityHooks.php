@@ -37,6 +37,10 @@ class AvatarKitEntityHooks implements AvatarKitEntityHooksInterface {
         // If this entity is not fieldable then none of this type are.
         return;
       }
+      if ($entity->isNew()) {
+        // Don't deal with unsaved or skeleton entities.
+        continue;
+      }
 
       $values = [$entity];
       static::preventRecursion(
