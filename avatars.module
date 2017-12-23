@@ -10,8 +10,8 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Implements hook_entity_update().
  */
-function avatars_entity_update(EntityInterface $entity) {
-  /** @var \Drupal\avatars\AvatarKitLocalCacheInterface $localCache */
-  $localCache = \Drupal::service('avatars.local_cache');
-  $localCache->invalidateCaches($entity);
+function avatars_entity_update(EntityInterface $entity): void {
+  /** @var $hookService \Drupal\avatars\AvatarKitEntityHooksInterface */
+  $hookService = \Drupal::service('avatars.hooks');
+  $hookService->update($entity);
 }

@@ -14,6 +14,8 @@ services:
   avatars.avatar_kit.factory.services:
     class: dpi\ak\AvatarServiceFactory
     arguments: ['@avatars.avatar_kit.discovery.services']
+  avatars.hooks:
+    class: Drupal\avatars\AvatarKitEntityHooks
   avatars.entity_preference:
     class: Drupal\avatars\AvatarKitEntityPreferenceManager
     arguments: ['@event_dispatcher', '@entity_type.manager', '@cache.avatars.entity_preference']
