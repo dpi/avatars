@@ -30,18 +30,19 @@ class AvatarKitEntityHooks implements AvatarKitEntityHooksInterface {
    * {@inheritdoc}
    */
   public function storageLoad(array $entities): void {
-    // Store loaded entities to prevent recursion.
-    $static = &\drupal_static(static::class . ':' . __FUNCTION__, []);
-
+    $bin = static::class . '::' . __FUNCTION__;
     foreach ($entities as $entity) {
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
-      $entity_key = $entity->getEntityTypeId() . ':' . $entity->id();
-      if (in_array($entity_key, $static)) {
-        continue;
-      }
-      $static[$entity_key] = $entity_key;
-      $this->entityFieldHandler()->checkUpdates($entity);
-      unset($static[$entity_key]);
+      $values = [$entity];
+      static::preventRecursion(
+        $bin,
+        function (EntityInterface $entity): string {
+          return $entity->getEntityTypeId() . ':' . $entity->id();
+        },
+        function (EntityInterface $entity): void {
+          $this->entityFieldHandler()->checkUpdates($entity);
+        },
+        $values
+      );
     }
   }
 
@@ -56,6 +57,36 @@ class AvatarKitEntityHooks implements AvatarKitEntityHooksInterface {
       $this->entityFieldHandler = \Drupal::service('avatars.entity.field_handler');
     }
     return $this->entityFieldHandler;
+  }
+
+  /**
+   * Wrapper utility to prevent recursion.
+   *
+   * @param string $bin
+   *   A key to prevent collisions with any other active callers of this
+   *   utility.
+   * @param callable $keyGen
+   *   A callable which will take $args, and return a unique string key.
+   * @param callable $recur
+   *   A callable which will take $args, which will run if it is already not
+   *   already being executed further up the calling stack. This method returns
+   *   void.
+   * @param array $args
+   *   An arbitrary array of values to pass to $keyGen and $recur callables.
+   */
+  static public function preventRecursion(string $bin, callable $keyGen, callable $recur, array $args): void {
+    static $static = [];
+
+    if (!isset($static[$bin])) {
+      $static[$bin] = [];
+    }
+
+    $key = $keyGen(...$args);
+    if (!in_array($key, $static[$bin])) {
+      $static[$bin][$key] = TRUE;
+      $recur(...$args);
+      unset($static[$bin][$key]);
+    }
   }
 
 }
