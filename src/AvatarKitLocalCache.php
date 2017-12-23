@@ -73,15 +73,34 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
     $entity = $identifier->getEntity();
     $identifier_hash = $identifier->getHashed();
 
+    $file = NULL;
     try {
       // @todo determine if URI is already a local file + managed by a permanent
       // file entity.
       $response = $this->downloadUtility->get($uri);
-      $filepath = $this->avatarFileName($service_id, $identifier);
-      $file = $this->downloadUtility->createFile($response, $filepath);
     }
     catch (\Exception $e) {
-      $file = NULL;
+      // Acceptable exceptions.
+      $log_args = [
+        '@service' => $service_id,
+        '@entity_type' => $entity->getEntityTypeId(),
+        '@entity_id' => $entity->id(),
+        '@message' => $e->getMessage(),
+      ];
+      $this->logger
+        ->debug('Failed to download @service avatar for @entity_type #@entity_id. This failure is probably acceptable. Message is: @message', $log_args);
+    }
+
+    if (isset($response)) {
+      // Different try block since we want to log these exceptions.
+      try {
+        $filepath = $this->avatarFileName($service_id, $identifier);
+        $file = $this->downloadUtility->createFile($response, $filepath);
+      }
+      catch (\Exception $e) {
+        $this->logger
+          ->error('Failed to create avatar file: @exception', ['@exception' => $e->getMessage()]);
+      }
     }
 
     /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
