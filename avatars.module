@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_entity_storage_load().
@@ -23,4 +24,17 @@ function avatars_entity_update(EntityInterface $entity): void {
   /** @var $hookService \Drupal\avatars\AvatarKitEntityHooksInterface */
   $hookService = \Drupal::service('avatars.hooks');
   $hookService->update($entity);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * FORM_ID: 'field_config_edit_form'.
+ *
+ * @see \Drupal\avatars\AvatarKitFormAlterInterface::fieldConfigEditForm
+ */
+function avatars_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var $formAlterService \Drupal\avatars\AvatarKitFormAlterInterface */
+  $formAlterService = \Drupal::service('avatars.form_alter');
+  $formAlterService->fieldConfigEditForm($form, $form_state);
 }

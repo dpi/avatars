@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for Avatar Kit.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function avatars_install() {
+  // Set the default hash string for user picture field.
+  $config = \Drupal::configFactory();
+  $config->getEditable('field.field.user.user.user_picture')
+    ->set('third_party_settings.avatars.hash.contents', '[user:mail]')
+    ->save(TRUE);
+}

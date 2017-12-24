@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException;
 use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -64,7 +65,12 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   public function findAll(EntityInterface $entity): \Generator {
     $service_ids = $this->preferenceManager->getPreferences($entity);
     foreach ($this->serviceStorage->loadMultipleGenerator($service_ids) as $service_id => $service_plugin) {
-      $identifier = $this->createEntityIdentifier($service_plugin, $entity);
+      try {
+        $identifier = $this->createEntityIdentifier($service_plugin, $entity);
+      }
+      catch (AvatarKitEntityAvatarIdentifierException $e) {
+        continue;
+      }
 
       // Check if the avatar for this entity service already exists.
       $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
@@ -100,6 +106,8 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
    *
    * @return \Drupal\avatars\EntityAvatarIdentifierInterface
    *   An identifier object.
+   *
+   * @throws \Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException
    */
   public static function createEntityIdentifier(AvatarKitServiceInterface $service, EntityInterface $entity) : EntityAvatarIdentifierInterface {
     $identifier = $service->createIdentifier();

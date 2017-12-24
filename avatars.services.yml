@@ -32,6 +32,8 @@ services:
   avatars.entity.field_handler:
     class: Drupal\avatars\AvatarKitEntityFieldHandler
     arguments: ['@avatars.entity']
+  avatars.form_alter:
+    class: Drupal\avatars\AvatarKitFormAlter
   avatars.local_cache:
     class: Drupal\avatars\AvatarKitLocalCache
     arguments: ['@entity_type.manager', '@logger.channel.avatars', '@avatars.utility.download']

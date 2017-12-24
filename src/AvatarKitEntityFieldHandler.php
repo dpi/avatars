@@ -86,15 +86,9 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
   }
 
   /**
-   * Get field name for avatars.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Get the field name for this entity.
-   *
-   * @return string|null
-   *   The field name, or NULL if no field name is defined.
+   * {@inheritdoc}
    */
-  protected function getAvatarFieldName(EntityInterface $entity) {
+  public function getAvatarFieldName(EntityInterface $entity): ?string {
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
     $entity_map = AvatarKitEntityMap::load($entity_type . '.' . $bundle . '.' . 'default');

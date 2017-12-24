@@ -45,3 +45,15 @@ avatars.entity_mapping.*.*.*:
     field_name:
       type: string
       label: 'Field name'
+
+field.field.*.*.*.third_party.avatars:
+  type: mapping
+  label: 'Avatar field settings'
+  mapping:
+    hash:
+      type: mapping
+      label: 'Hash'
+      mapping:
+        contents:
+          label: 'Contents'
+          type: string

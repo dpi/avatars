@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 
 /**
@@ -30,5 +31,16 @@ interface AvatarKitEntityFieldHandlerInterface {
    *   Check this avatar if it needs a new avatar.
    */
   public function checkUpdates(FieldableEntityInterface $entity): void;
+
+  /**
+   * Get field name for avatars.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get the field name for this entity.
+   *
+   * @return string|null
+   *   The field name, or NULL if no field name is defined.
+   */
+  public function getAvatarFieldName(EntityInterface $entity): ?string;
 
 }
