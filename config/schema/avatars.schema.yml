@@ -28,6 +28,8 @@ avatars.avatar_service_common_base:
       type: integer
     height:
       type: integer
+    protocol:
+      type: string
 
 avatars.entity_mapping.*.*.*:
   type: config_entity

@@ -116,7 +116,11 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
       $configuration->setHeight($height);
     }
 
-    $configuration->setProtocol('https');
+    $protocol = $this->configuration['protocol'] ?? NULL;
+    if (!empty($protocol)) {
+      $configuration->setProtocol($protocol);
+    }
+
     return $this->createService($configuration);
   }
 
@@ -127,12 +131,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     $metadata = $this->getMetadata();
 
     $protocols = $metadata->protocols ?? [];
-    $protocol_options = array_map(
-      function (string $protocol) : string {
-        return $protocol;
-      },
-      $protocols
-    );
+    $protocol_options = array_combine($protocols, $protocols);
 
     $form['protocol'] = [
       '#title' => $this->t('Protocol'),
@@ -162,6 +161,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     parent::submitConfigurationForm($form, $form_state);
     $this->configuration['width'] = $form_state->getValue('width');
     $this->configuration['height'] = $form_state->getValue('height');
+    $this->configuration['protocol'] = $form_state->getValue('protocol');
   }
 
   /**
@@ -171,6 +171,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     $configuration = parent::defaultConfiguration();
     $configuration['width'] = NULL;
     $configuration['height'] = NULL;
+    $configuration['protocol'] = NULL;
     return $configuration;
   }
 
