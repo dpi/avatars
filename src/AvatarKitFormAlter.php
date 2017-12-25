@@ -40,11 +40,12 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       '#weight' => 50,
     ];
 
+    $target_entity_type_id = $field_config->getTargetEntityTypeId();
     $form['avatars']['hash'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Identifier string'),
       '#description' => $this->t('Generate avatar hashes for @entity_type_plural based on this string.', [
-        '@entity_type_plural' => $this->entityTypeManager()->getDefinition($field_config->getTargetEntityTypeId())->getPluralLabel(),
+        '@entity_type_plural' => $this->entityTypeManager()->getDefinition($target_entity_type_id)->getPluralLabel(),
       ]),
       '#default_value' => $third_party['hash']['contents'] ?? NULL,
     ];
@@ -52,7 +53,7 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
     // Add the token tree UI.
     $form['avatars']['token_tree'] = [
       '#theme' => 'token_tree_link',
-      '#token_types' => ['user'],
+      '#token_types' => [$target_entity_type_id],
       '#show_nested' => FALSE,
       '#global_types' => FALSE,
     ];
