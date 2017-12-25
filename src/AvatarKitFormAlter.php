@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -50,13 +51,15 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       '#default_value' => $third_party['hash']['contents'] ?? NULL,
     ];
 
-    // Add the token tree UI.
-    $form['avatars']['token_tree'] = [
-      '#theme' => 'token_tree_link',
-      '#token_types' => [$target_entity_type_id],
-      '#show_nested' => FALSE,
-      '#global_types' => FALSE,
-    ];
+    if ($this->moduleHandler()->moduleExists('token')) {
+      // Add the token tree UI.
+      $form['avatars']['token_tree'] = [
+        '#theme' => 'token_tree_link',
+        '#token_types' => [$target_entity_type_id],
+        '#show_nested' => FALSE,
+        '#global_types' => FALSE,
+      ];
+    }
 
     // Our submission function needs to be before
     // \Drupal\field_ui\Form\FieldConfigEditForm::save.
@@ -89,6 +92,16 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       $this->entityTypeManager = \Drupal::entityTypeManager();
     }
     return $this->entityTypeManager;
+  }
+
+  /**
+   * Get the module handler.
+   *
+   * @return \Drupal\Core\Extension\ModuleHandlerInterface
+   *   The module handler.
+   */
+  protected function moduleHandler(): ModuleHandlerInterface {
+    return \Drupal::moduleHandler();
   }
 
 }

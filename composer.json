@@ -21,5 +21,8 @@
     "drupal/coder": "^8.2.12",
     "phpunit/phpunit": "5",
     "squizlabs/php_codesniffer": "^2.7"
+  },
+  "suggest": {
+    "drupal/token": "Adds token UI to field UI forms."
   }
 }
