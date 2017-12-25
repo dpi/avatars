@@ -31,6 +31,13 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
     /** @var \Drupal\field\FieldConfigInterface $field_config */
     $field_config = $form_object->getEntity();
 
+
+    $avatar_field_types = ['file', 'image'];
+    if (!in_array($field_config->getType(), $avatar_field_types)) {
+      // Only add our form alters if this is a valid avatar field target.
+      return;
+    }
+
     $third_party = $field_config->getThirdPartySettings('avatars');
 
     $form['avatars'] = [
