@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Drupal form alters.
@@ -26,11 +27,7 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
    * {@inheritdoc}
    */
   public function fieldConfigEditForm(array &$form, FormStateInterface $form_state): void {
-    /** @var \Drupal\field_ui\Form\FieldConfigEditForm $obj */
-    $form_object = $form_state->getFormObject();
-    /** @var \Drupal\field\FieldConfigInterface $field_config */
-    $field_config = $form_object->getEntity();
-
+    $field_config = $this->getFieldConfig($form_state);
 
     $avatar_field_types = ['file', 'image'];
     if (!in_array($field_config->getType(), $avatar_field_types)) {
@@ -80,12 +77,24 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
    * {@inheritdoc}
    */
   public function fieldConfigEditFormSubmit(array $form, FormStateInterface $form_state): void {
-    /** @var \Drupal\field_ui\Form\FieldConfigEditForm $obj */
-    $form_object = $form_state->getFormObject();
-    /** @var \Drupal\field\FieldConfigInterface $field_config */
-    $field_config = $form_object->getEntity();
+    $field_config = $this->getFieldConfig($form_state);
     $hash['contents'] = $form_state->getValue(['avatars', 'hash']);
     $field_config->setThirdPartySetting('avatars', 'hash', $hash);
+  }
+
+  /**
+   * Get the field config entity.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return \Drupal\field\FieldConfigInterface
+   *   The field config entity.
+   */
+  public function getFieldConfig(FormStateInterface $form_state): FieldConfigInterface {
+    /** @var \Drupal\field_ui\Form\FieldConfigEditForm $form_object */
+    $form_object = $form_state->getFormObject();
+    return $form_object->getEntity();
   }
 
   /**
