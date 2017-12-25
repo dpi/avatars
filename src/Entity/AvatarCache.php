@@ -65,12 +65,6 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
       ->setRequired(TRUE)
       ->setReadOnly(TRUE);
 
-    // @see \Drupal\dynamic_entity_reference\Plugin\Field\FieldType\DynamicEntityReferenceItem
-    $fields['entity'] = BaseFieldDefinition::create('dynamic_entity_reference')
-      ->setLabel(t('Entity'))
-      ->setDescription(t('The entity the avatar is based on.'))
-      ->setRequired(FALSE);
-
     // @see \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem
     $fields['avatar'] = BaseFieldDefinition::create('file')
       ->setLabel(t('Reference to a file entity containing an image.'))

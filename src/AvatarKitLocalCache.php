@@ -53,11 +53,10 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
    * {@inheritdoc}
    */
   public function getLocalCache(string $service_id, EntityAvatarIdentifierInterface $identifier) : ?AvatarCacheInterface {
-    $entity = $identifier->getEntity();
+    $hashed = $identifier->getHashed();
     $ids = $this->avatarCacheStorage->getQuery()
       ->condition('avatar_service', $service_id)
-      ->condition('entity__target_id', $entity->id())
-      ->condition('entity__target_type', $entity->getEntityTypeId())
+      ->condition('identifier', $hashed)
       ->execute();
     if ($ids) {
       $id = reset($ids);
@@ -107,7 +106,6 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
     $avatar_cache = $this->avatarCacheStorage->create([
       'avatar_service' => $service_id,
       'identifier' => $identifier_hash,
-      'entity' => $entity,
       'avatar' => $file,
     ]);
     $avatar_cache->save();
@@ -120,39 +118,10 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * {@inheritdoc}
    */
-  public function getLocalCaches(EntityInterface $entity): array {
-    $ids = $this->avatarCacheStorage->getQuery()
-      ->condition('entity__target_id', $entity->id())
-      ->condition('entity__target_type', $entity->getEntityTypeId())
-      ->execute();
-    return $this->avatarCacheStorage->loadMultiple($ids);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function invalidateCaches(EntityInterface $entity): void {
     // Get all caches in storage, don't need to worry about preferences or
     // progressively loading each service.
-    /** @var \Drupal\avatars\Entity\AvatarCacheInterface[] $caches */
-    $caches = $this->getLocalCaches($entity);
-
-    foreach ($caches as $cache) {
-      $service = $cache->getAvatarService();
-      if (!$service) {
-        continue;
-      }
-      $service_plugin = $service->getPlugin();
-      if (!$service_plugin) {
-        continue;
-      }
-
-      $identifier = AvatarKitEntityHandler::createEntityIdentifier($service_plugin, $entity);
-      if ($cache->getIdentifier() !== $identifier->getHashed()) {
-        // @todo log?
-        $cache->delete();
-      }
-    }
+    // @todo
   }
 
   /**
@@ -167,14 +136,7 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
    *   A filesystem URI.
    */
   protected function avatarFileName(string $service_id, EntityAvatarIdentifierInterface $identifier): string {
-    $entity = $identifier->getEntity();
-    if ($entity) {
-      $filename = 'public://avatar_kit/' . $service_id . '/content/' . $entity->getEntityTypeId() . '/' . $entity->id();
-    }
-    else {
-      $filename = 'public://avatar_kit/' . $service_id . '/identifier/' . $identifier->getHashed();
-    }
-    return $filename;
+    return 'public://avatar_kit/' . $service_id . '/identifier/' . $identifier->getHashed();
   }
 
 }

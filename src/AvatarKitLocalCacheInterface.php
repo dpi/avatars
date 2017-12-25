@@ -40,17 +40,6 @@ interface AvatarKitLocalCacheInterface {
   public function localCache(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier): ?AvatarCacheInterface;
 
   /**
-   * Get all caches in storage for an entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Get avatar caches for this entity.
-   *
-   * @return \Drupal\avatars\Entity\AvatarCacheInterface[]
-   *   An array of avatar cache entities.
-   */
-  public function getLocalCaches(EntityInterface $entity): array;
-
-  /**
    * Determines if caches for an entity need to be invalidated.
    *
    * Used when an entity is modified.
