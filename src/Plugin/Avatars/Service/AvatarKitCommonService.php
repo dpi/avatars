@@ -77,6 +77,16 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
   }
 
   /**
+   * Create a new configuration object.
+   *
+   * @return \dpi\ak\AvatarConfigurationInterface
+   *   A new configuration object.
+   */
+  protected function newAvatarConfiguration(): AvatarConfigurationInterface {
+    return new AvatarConfiguration();
+  }
+
+  /**
    * Gets metadata for a service from Avatar Kit library.
    *
    * @return \dpi\ak\Annotation\AvatarService
@@ -94,7 +104,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
    *   A new service instance
    */
   protected function getService() {
-    $configuration = new AvatarConfiguration();
+    $configuration = $this->newAvatarConfiguration();
 
     $width = $this->configuration['width'] ?? NULL;
     if (is_int($width)) {
