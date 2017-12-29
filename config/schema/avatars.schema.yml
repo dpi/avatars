@@ -59,3 +59,9 @@ field.field.*.*.*.third_party.avatars:
         contents:
           label: 'Contents'
           type: string
+    services:
+      type: sequence
+      label: 'Ordered list of service plugin IDs'
+      sequence:
+        type: string
+        label: 'Service plugin ID'

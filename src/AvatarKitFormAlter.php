@@ -85,6 +85,20 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
     $field_config = $this->getFieldConfig($form_state);
     $hash['contents'] = $form_state->getValue(['avatars', 'hash']);
     $field_config->setThirdPartySetting('avatars', 'hash', $hash);
+
+    $enabledServices = [];
+    $service_info = $form_state->getValue(['avatars', 'services']);
+    foreach ($service_info as $service_id => $info) {
+      ['status' => $status, 'weight' => $weight] = $info;
+      // Ignore disabled services.
+      if ($status == 'enabled') {
+        $enabledServices[$weight] = $service_id;
+      }
+    }
+
+    ksort($enabledServices, SORT_NUMERIC);
+
+    $field_config->setThirdPartySetting('avatars', 'services', $enabledServices);
   }
 
   /**
