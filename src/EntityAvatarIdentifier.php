@@ -56,15 +56,9 @@ class EntityAvatarIdentifier extends AvatarIdentifier implements EntityAvatarIde
    * @throws \Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException
    */
   protected function tokenReplace(EntityInterface $entity): string {
-    $field_name = $this->entityFieldHandler()->getAvatarFieldName($entity);
-    if (!$field_name) {
-      throw new AvatarKitEntityAvatarIdentifierException('No field mapping for this entity.');
-    }
-
-    $field_config_id = $entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $field_name;
-    $field_config = FieldConfig::load($field_config_id);
+    $field_config = $this->entityFieldHandler()->getAvatarFieldConfig($entity);
     if (!$field_config) {
-      throw new AvatarKitEntityAvatarIdentifierException('Field config no longer exists.');
+      throw new AvatarKitEntityAvatarIdentifierException('No field mapping/field config for this entity.');
     }
 
     $hash_settings = $field_config->getThirdPartySetting('avatars', 'hash');

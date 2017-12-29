@@ -6,6 +6,8 @@ use Drupal\avatars\Entity\AvatarCacheInterface;
 use Drupal\avatars\Entity\AvatarKitEntityMap;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\FieldConfigInterface;
 use Drupal\file\FileInterface;
 
 /**
@@ -93,6 +95,21 @@ class AvatarKitEntityFieldHandler implements AvatarKitEntityFieldHandlerInterfac
     $bundle = $entity->bundle();
     $entity_map = AvatarKitEntityMap::load($entity_type . '.' . $bundle . '.' . 'default');
     return $entity_map ? $entity_map->getFieldName() : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAvatarFieldConfig(EntityInterface $entity): ?FieldConfigInterface {
+    $field_name = $this->getAvatarFieldName($entity);
+
+    if (!$field_name) {
+      return NULL;
+    }
+
+    $field_config_id = $entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $field_name;
+    $field_config = FieldConfig::load($field_config_id);
+    return $field_config ? $field_config : NULL;
   }
 
 }

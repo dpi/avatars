@@ -5,6 +5,7 @@ namespace Drupal\avatars;
 use Drupal\avatars\Entity\AvatarCacheInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Handles pushing avatar caches into entities.
@@ -42,5 +43,16 @@ interface AvatarKitEntityFieldHandlerInterface {
    *   The field name, or NULL if no field name is defined.
    */
   public function getAvatarFieldName(EntityInterface $entity): ?string;
+
+  /**
+   * Get target field configuration for an entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Get the field for this entity.
+   *
+   * @return \Drupal\field\FieldConfigInterface|null
+   *   A field config entity, or NULL if one does not exist for this entity.
+   */
+  public function getAvatarFieldConfig(EntityInterface $entity): ?FieldConfigInterface;
 
 }
