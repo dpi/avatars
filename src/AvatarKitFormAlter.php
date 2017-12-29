@@ -2,6 +2,8 @@
 
 namespace Drupal\avatars;
 
+use Drupal\avatars\Entity\AvatarKitService;
+use Drupal\avatars\Entity\AvatarKitServiceInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -65,6 +67,9 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       ];
     }
 
+    $form['#attached']['library'][] = 'avatars/avatars.admin';
+    $form['avatars']['services'] = $this->buildServiceTable($field_config);
+
     // Our submission function needs to be before
     // \Drupal\field_ui\Form\FieldConfigEditForm::save.
     array_unshift(
@@ -118,6 +123,123 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
    */
   protected function moduleHandler(): ModuleHandlerInterface {
     return \Drupal::moduleHandler();
+  }
+
+  /**
+   * Build a weightable + grouped avatar services table.
+   *
+   * @param \Drupal\field\FieldConfigInterface $field_config
+   *   The field configuration.
+   *
+   * @return array
+   *   A render array.
+   */
+  protected function buildServiceTable(FieldConfigInterface $field_config): array {
+    $headers = [
+      'label' => $this->t('Service'),
+      'weight' => $this->t('Weight'),
+      'status' => $this->t('Status'),
+    ];
+
+    $table_drag_group = 'avatar-service-weight';
+
+    $table = [
+      '#type' => 'table',
+      '#header' => $headers,
+      '#empty' => $this->t('No avatar service instances found.'),
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => $table_drag_group,
+        ],
+      ],
+      '#default_value' => [],
+      '#attributes' => [
+        'id' => 'xyz',
+      ],
+    ];
+
+    $existingServices = $field_config->getThirdPartySetting('avatars', 'services', []);
+
+    /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface[] $instances */
+    $instances = AvatarKitService::loadMultiple();
+
+    // Group services according to whether they appear in this field config.
+    $groupedServices = [];
+
+    // Create an empty 'enabled' array so it appears at the top.
+    $groupedServices['enabled'] = [];
+
+    foreach ($instances as $instance) {
+      $group = in_array($instance->id(), $existingServices) ? 'enabled' : 'disabled';
+      $groupedServices[$group][] = $instance;
+    }
+
+    // Sort services according to their order in field config (for enabled).
+    // This does nothing for disabled services.
+    foreach ($groupedServices as $group => &$values) {
+      usort($values, function (AvatarKitServiceInterface $a, AvatarKitServiceInterface $b) use ($existingServices) {
+        $a_key = array_search($a->id(), $existingServices);
+        $b_key = array_search($b->id(), $existingServices);
+        return $a_key < $b_key ? -1 : 1;
+      });
+    }
+
+    $regionsTranslated = [
+      'disabled' => $this->t('Disabled'),
+      'enabled' => $this->t('Enabled'),
+    ];
+
+    foreach ($groupedServices as $region => $services) {
+      $table[$region]['#attributes']['data-tabledrag-region'] = $region;
+      $table[$region][] = [
+        '#type' => 'inline_template',
+        '#template' => '<strong>{{ region }}</strong>',
+        '#context' => [
+          'region' => $regionsTranslated[$region],
+        ],
+        '#wrapper_attributes' => [
+          'colspan' => count($headers),
+        ],
+      ];
+
+      /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface $service */
+      foreach ($services as $weight => $service) {
+        $row = [];
+
+        $row['#attributes']['class'][] = 'draggable';
+        $row['label']['#plain_text'] = $service->label();
+
+        $row['weight'] = [
+          '#type' => 'weight',
+          '#title' => $this->t('Weight'),
+          '#title_display' => 'invisible',
+          '#default_value' => $weight,
+          '#attributes' => [
+            'class' => [$table_drag_group, 'tabledrag-region-weight'],
+          ],
+        ];
+
+        $row['status'] = [
+          '#type' => 'select',
+          '#title' => $this->t('Status'),
+          '#title_display' => 'invisible',
+          '#default_value' => $region,
+          '#options' => $regionsTranslated,
+          '#attributes' => [
+            'class' => [
+              'tabledrag-region-value',
+            ],
+          ],
+        ];
+
+        $id = $service->id();
+        $table[$id] = $row;
+      }
+    }
+
+    return $table;
   }
 
 }

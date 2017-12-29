@@ -1,0 +1,7 @@
+avatars.admin:
+  version: VERSION
+  js:
+    js/avatars.admin.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
