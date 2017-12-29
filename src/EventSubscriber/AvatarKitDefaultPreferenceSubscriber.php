@@ -33,7 +33,7 @@ class AvatarKitDefaultPreferenceSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[AvatarKitEvents::ENTITY_SERVICE_PREFERENCE][] = ['avatarServiceWeights'];
+    $events[AvatarKitEvents::ENTITY_SERVICE_PREFERENCE][] = ['avatarServiceWeights', 0];
     return $events;
   }
 

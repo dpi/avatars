@@ -22,8 +22,13 @@ services:
   avatars.entity_preference:
     class: Drupal\avatars\AvatarKitEntityPreferenceManager
     arguments: ['@event_dispatcher', '@entity_type.manager', '@cache.avatars.entity_preference']
-  avatars.entity_preference.default_subscriber:
+  avatars.service_preference.default:
     class: Drupal\avatars\EventSubscriber\AvatarKitDefaultPreferenceSubscriber
+    tags:
+      - { name: event_subscriber }
+  avatars.service_preference.entity_field:
+    class: Drupal\avatars\EventSubscriber\AvatarKitEntityFieldPreferenceSubscriber
+    arguments: ['@avatars.entity.field_handler']
     tags:
       - { name: event_subscriber }
   avatars.entity:
