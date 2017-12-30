@@ -4,6 +4,7 @@ namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarKitService;
 use Drupal\avatars\Entity\AvatarKitServiceInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -99,6 +100,20 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
     ksort($enabledServices, SORT_NUMERIC);
 
     $field_config->setThirdPartySetting('avatars', 'services', $enabledServices);
+
+    // Reset avatar preferences.
+    $entityTypeId = $field_config->getTargetEntityTypeId();
+    $bundle = $field_config->getTargetBundle();
+    $this->entityPreferenceManager()->invalidatePreferences(
+      $field_config->getTargetEntityTypeId(),
+      $bundle
+    );
+
+    // Reset entity render caches.
+    $viewTags = [$entityTypeId . '_view'];
+    $listTags = $this->entityTypeManager()->getDefinition($entityTypeId)->getListCacheTags();
+    $tags = Cache::mergeTags($viewTags, $listTags);
+    Cache::invalidateTags($tags);
   }
 
   /**
@@ -127,6 +142,16 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       $this->entityTypeManager = \Drupal::entityTypeManager();
     }
     return $this->entityTypeManager;
+  }
+
+  /**
+   * Get the entity preference manager.
+   *
+   * @return \Drupal\avatars\AvatarKitEntityPreferenceManagerInterface
+   *   The entity preference manager.
+   */
+  protected function entityPreferenceManager(): AvatarKitEntityPreferenceManagerInterface {
+    return \Drupal::service('avatars.entity_preference');
   }
 
   /**

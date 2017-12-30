@@ -87,4 +87,13 @@ class AvatarKitEntityPreferenceManager implements AvatarKitEntityPreferenceManag
     return $service_ids;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function invalidatePreferences(string $entityType, string $bundle): void {
+    // There is currently no way to differentiate entity type / bundles. So
+    // reset everything.
+    $this->preferenceCacheBackend->invalidateAll();
+  }
+
 }

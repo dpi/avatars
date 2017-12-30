@@ -21,4 +21,14 @@ interface AvatarKitEntityPreferenceManagerInterface {
    */
   public function getPreferences(EntityInterface $entity) : array;
 
+  /**
+   * Reset preferences for a entity bundle.
+   *
+   * @param string $entityType
+   *   An entity type ID.
+   * @param string $bundle
+   *   A bundle.
+   */
+  public function invalidatePreferences(string $entityType, string $bundle): void;
+
 }
