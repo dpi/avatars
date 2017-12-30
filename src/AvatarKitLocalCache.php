@@ -20,6 +20,13 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   protected $avatarCacheStorage;
 
   /**
+   * Storage for 'file' entity.
+   *
+   * @var \Drupal\Core\Entity\ContentEntityStorageInterface
+   */
+  protected $fileStorage;
+
+  /**
    * The logger instance.
    *
    * @var \Psr\Log\LoggerInterface
@@ -29,7 +36,7 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * The download utility.
    *
-   * @var AvatarKitDownloadUtilityInterface
+   * @var \Drupal\avatars\AvatarKitDownloadUtilityInterface
    */
   protected $downloadUtility;
 
@@ -40,11 +47,12 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
    *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
-   * @param AvatarKitDownloadUtilityInterface $downloadUtility
+   * @param \Drupal\avatars\AvatarKitDownloadUtilityInterface $downloadUtility
    *   The download utility.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager, LoggerInterface $logger, AvatarKitDownloadUtilityInterface $downloadUtility) {
     $this->avatarCacheStorage = $entityTypeManager->getStorage('avatars_avatar_cache');
+    $this->fileStorage = $entityTypeManager->getStorage('file');
     $this->logger = $logger;
     $this->downloadUtility = $downloadUtility;
   }
@@ -68,14 +76,36 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * {@inheritdoc}
    */
-  public function localCache(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : ?AvatarCacheInterface {
+  public function cacheLocalFileEntity(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : ?AvatarCacheInterface {
+    $identifier_hash = $identifier->getHashed();
+
+    $files = $this->fileStorage->loadByProperties(['uri' => $uri]);
+    if (!$files) {
+      return NULL;
+    }
+
+    $file = reset($files);
+
+    /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
+    $avatar_cache = $this->avatarCacheStorage->create([
+      'avatar_service' => $service_id,
+      'identifier' => $identifier_hash,
+      'avatar' => $file,
+    ]);
+    $avatar_cache->save();
+
+    return $avatar_cache;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cacheRemote(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : ?AvatarCacheInterface {
     $entity = $identifier->getEntity();
     $identifier_hash = $identifier->getHashed();
 
     $file = NULL;
     try {
-      // @todo determine if URI is already a local file + managed by a permanent
-      // file entity.
       $response = $this->downloadUtility->get($uri);
     }
     catch (\Exception $e) {
@@ -102,6 +132,10 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
       }
     }
 
+    if (!$file) {
+      return NULL;
+    }
+
     /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
     $avatar_cache = $this->avatarCacheStorage->create([
       'avatar_service' => $service_id,
@@ -110,7 +144,22 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
     ]);
     $avatar_cache->save();
 
-    // @todo ensure usage entry is created.
+    return $avatar_cache;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cacheEmpty(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface {
+    $identifier_hash = $identifier->getHashed();
+
+    /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
+    $avatar_cache = $this->avatarCacheStorage->create([
+      'avatar_service' => $service_id,
+      'identifier' => $identifier_hash,
+      'avatar' => NULL,
+    ]);
+    $avatar_cache->save();
 
     return $avatar_cache;
   }

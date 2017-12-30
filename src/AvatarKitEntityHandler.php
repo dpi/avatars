@@ -75,24 +75,37 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       // Check if the avatar for this entity service already exists.
       $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
       if ($cache) {
+        // Yield if there is a file.
         if ($cache->getAvatar()) {
           yield $service_id => $cache;
         }
         continue;
       }
 
-      // Download the avatar if it isn't already local.
+      // A new cache needs to be created:
       $uri = $service_plugin->getAvatar($identifier);
-      $cache = $this->entityLocalCache
-        ->localCache($service_id, $uri, $identifier);
+      $args = [$service_id, $uri, $identifier];
 
-      // If the avatar was downloaded and saved to a cache successfully.
-      if ($cache) {
-        if ($cache->getAvatar()) {
+      // Try local.
+      $plugin_supports_local = $service_plugin->getPluginDefinition()['files'] ?? FALSE;
+      if ($plugin_supports_local) {
+        $cache = $this->entityLocalCache->cacheLocalFileEntity(...$args);
+        if ($cache) {
           yield $service_id => $cache;
+          continue;
         }
+      }
+
+      // Try remote.
+      $cache = $cache ?? $this->entityLocalCache->cacheRemote(...$args);
+      if ($cache) {
+        yield $service_id => $cache;
         continue;
       }
+
+      // Else empty.
+      // Don't yield the cache because it isn't considered *successful*.
+      $this->entityLocalCache->cacheEmpty(...$args);
     }
   }
 
