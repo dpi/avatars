@@ -65,3 +65,10 @@ field.field.*.*.*.third_party.avatars:
       sequence:
         type: string
         label: 'Service plugin ID'
+
+avatars.avatar_service.settings.avatars_entity_field:
+  type: mapping
+  mapping:
+    field:
+      type: string
+      label: 'Field instance'
