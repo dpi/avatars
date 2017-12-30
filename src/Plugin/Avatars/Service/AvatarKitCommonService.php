@@ -136,6 +136,8 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
     $form['protocol'] = [
       '#title' => $this->t('Protocol'),
       '#options' => $protocol_options,
+      '#default_value' => $this->configuration['protocol'] ?? NULL,
+      '#required' => TRUE,
       '#type' => 'select',
     ];
 
