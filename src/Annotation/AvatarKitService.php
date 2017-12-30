@@ -9,4 +9,29 @@ use Drupal\Component\Annotation\Plugin;
  *
  * @Annotation
  */
-class AvatarKitService extends Plugin {}
+class AvatarKitService extends Plugin {
+
+  /**
+   * Unique identifier of the service.
+   *
+   * @var string
+   * @Required
+   */
+  public $id;
+
+  /**
+   * Description of the service.
+   *
+   * @var string
+   * @Required
+   */
+  public $description;
+
+  /**
+   * Whether the service uses File entities as a source.
+   *
+   * @var bool
+   */
+  public $files = FALSE;
+
+}
