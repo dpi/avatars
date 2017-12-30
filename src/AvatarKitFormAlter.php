@@ -2,6 +2,7 @@
 
 namespace Drupal\avatars;
 
+use Drupal\avatars\Entity\AvatarKitEntityMap;
 use Drupal\avatars\Entity\AvatarKitService;
 use Drupal\avatars\Entity\AvatarKitServiceInterface;
 use Drupal\Core\Cache\Cache;
@@ -38,7 +39,15 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       return;
     }
 
-    $third_party = $field_config->getThirdPartySettings('avatars');
+    $target_entity_type_id = $field_config->getTargetEntityTypeId();
+    $targetBundle = $field_config->getTargetBundle();
+
+    // Only show this form if this type is in the active map.
+    $entityMap = AvatarKitEntityMap::load($target_entity_type_id . '.' . $targetBundle . '.' . 'default');
+    $entityMapFieldName = $entityMap ? $entityMap->getFieldName() : NULL;
+    if ($entityMapFieldName != $field_config->getName()) {
+      return;
+    }
 
     $form['avatars'] = [
       '#type' => 'details',
@@ -48,7 +57,7 @@ class AvatarKitFormAlter implements AvatarKitFormAlterInterface {
       '#weight' => 50,
     ];
 
-    $target_entity_type_id = $field_config->getTargetEntityTypeId();
+    $third_party = $field_config->getThirdPartySettings('avatars');
     $form['avatars']['hash'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Identifier string'),
