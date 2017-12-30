@@ -178,7 +178,7 @@ abstract class AvatarKitCommonService extends AvatarKitServiceBase implements Co
   /**
    * {@inheritdoc}
    */
-  public function getAvatar(AvatarIdentifierInterface $identifier): string {
+  public function getAvatar(AvatarIdentifierInterface $identifier): ?string {
     return $this->getService()
       ->getAvatar($identifier);
   }
