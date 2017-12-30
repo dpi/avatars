@@ -86,21 +86,23 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       $uri = $service_plugin->getAvatar($identifier);
       $args = [$service_id, $uri, $identifier];
 
-      // Try local.
-      $plugin_supports_local = $service_plugin->getPluginDefinition()['files'] ?? FALSE;
-      if ($plugin_supports_local) {
-        $cache = $this->entityLocalCache->cacheLocalFileEntity(...$args);
+      if ($uri) {
+        // Try local.
+        $plugin_supports_local = $service_plugin->getPluginDefinition()['files'] ?? FALSE;
+        if ($plugin_supports_local) {
+          $cache = $this->entityLocalCache->cacheLocalFileEntity(...$args);
+          if ($cache) {
+            yield $service_id => $cache;
+            continue;
+          }
+        }
+
+        // Try remote.
+        $cache = $cache ?? $this->entityLocalCache->cacheRemote(...$args);
         if ($cache) {
           yield $service_id => $cache;
           continue;
         }
-      }
-
-      // Try remote.
-      $cache = $cache ?? $this->entityLocalCache->cacheRemote(...$args);
-      if ($cache) {
-        yield $service_id => $cache;
-        continue;
       }
 
       // Else empty.

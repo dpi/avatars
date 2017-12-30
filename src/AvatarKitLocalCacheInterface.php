@@ -61,15 +61,15 @@ interface AvatarKitLocalCacheInterface {
    *
    * @param string $service_id
    *   An avatar service ID.
-   * @param string $uri
-   *   The URL of an avatar to download.
+   * @param string|null $uri
+   *   The URL of an avatar.
    * @param \Drupal\avatars\EntityAvatarIdentifierInterface $identifier
    *   An entity avatar identifier.
    *
    * @return \Drupal\avatars\Entity\AvatarCacheInterface
    *   An avatar cache entity.
    */
-  public function cacheEmpty(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface;
+  public function cacheEmpty(string $service_id, ?string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface;
 
   /**
    * Determines if caches for an entity need to be invalidated.

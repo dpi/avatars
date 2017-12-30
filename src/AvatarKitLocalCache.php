@@ -150,7 +150,7 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * {@inheritdoc}
    */
-  public function cacheEmpty(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface {
+  public function cacheEmpty(string $service_id, ?string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface {
     $identifier_hash = $identifier->getHashed();
 
     /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
