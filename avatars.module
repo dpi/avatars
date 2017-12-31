@@ -7,6 +7,21 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function avatars_help(string $route_name, RouteMatchInterface $route_match): ?array {
+  switch ($route_name) {
+    case 'avatars.config.entity_map':
+      return [
+        '#markup' => t('<p>' . t('Select the destination field where avatars should be placed. Any existing images in the field will be overwritten. If you wish for uploaded images to be retained, then create a new image field and map to the new field instead.') . '</p>')
+      ];
+  }
+
+  return NULL;
+}
 
 /**
  * Implements hook_entity_storage_load().

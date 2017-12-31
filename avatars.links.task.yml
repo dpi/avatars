@@ -3,6 +3,11 @@ avatars.config.services:
   title: 'Services'
   base_route: avatars.config.services
 
+avatars.config.entity_map:
+  route_name: avatars.config.entity_map
+  title: 'Entity mapping'
+  base_route: avatars.config.services
+
 avatars.config.settings:
   route_name: avatars.config.settings
   title: 'Settings'
