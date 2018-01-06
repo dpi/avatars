@@ -2,6 +2,7 @@
 
 namespace Drupal\avatars\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -43,6 +44,14 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
    */
   public function getAvatar(): ?FileInterface {
     return $this->get('avatar')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAvatar(?FileInterface $entity): AvatarCacheInterface {
+    $this->set('avatar', $entity);
+    return $this;
   }
 
   /**

@@ -32,6 +32,17 @@ interface AvatarCacheInterface extends ContentEntityInterface {
   public function getAvatar(): ?FileInterface;
 
   /**
+   * Set the avatar file.
+   *
+   * @param \Drupal\file\FileInterface|null $entity
+   *   A file entity, or NULL.
+   *
+   * @return $this
+   *   Return this object for chaining.
+   */
+  public function setAvatar(?FileInterface $entity): self;
+
+  /**
    * Get the identifier used to generate the avatar.
    *
    * @return string
