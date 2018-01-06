@@ -20,6 +20,7 @@ use Drupal\field\Entity\FieldConfig;
  *   label = @Translation("Copy uploaded image"),
  *   description = @Translation("Copies an image uploaded to the entity."),
  *   files = TRUE,
+ *   dynamic = TRUE,
  * )
  */
 class AvatarKitEntityField extends AvatarKitServiceBase {

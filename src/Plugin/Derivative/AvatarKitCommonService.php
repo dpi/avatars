@@ -59,6 +59,7 @@ class AvatarKitCommonService extends DeriverBase implements ContainerDeriverInte
       $this->derivatives[$id] = $base_plugin_definition;
       $this->derivatives[$id]['label'] = $service->name;
       $this->derivatives[$id]['description'] = $service->description;
+      $this->derivatives[$id]['dynamic'] = !empty($service->is_dynamic);
     }
     return $this->derivatives;
   }

@@ -34,4 +34,11 @@ class AvatarKitService extends Plugin {
    */
   public $files = FALSE;
 
+  /**
+   * Whether this service can produce different avatars given same identifiers.
+   *
+   * @var bool
+   */
+  public $dynamic = FALSE;
+
 }
