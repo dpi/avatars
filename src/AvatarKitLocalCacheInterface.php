@@ -32,12 +32,15 @@ interface AvatarKitLocalCacheInterface {
    *   The URL of an file stored locally.
    * @param \Drupal\avatars\EntityAvatarIdentifierInterface $identifier
    *   An entity avatar identifier.
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface|null $avatar_cache_existing
+   *   An existing avatar cache entity for this service ID and identifier, or
+   *   null if a new avatar cache should be created on success.
    *
    * @return \Drupal\avatars\Entity\AvatarCacheInterface|null
    *   An avatar cache entity, or NULL if no pre-existing file entity exists
    *   with provided URI.
    */
-  public function cacheLocalFileEntity(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier): ?AvatarCacheInterface;
+  public function cacheLocalFileEntity(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier, AvatarCacheInterface $avatar_cache_existing = NULL): ?AvatarCacheInterface;
 
   /**
    * Download and save the file to an avatar cache entity.
@@ -48,11 +51,14 @@ interface AvatarKitLocalCacheInterface {
    *   The URL of an avatar to download.
    * @param \Drupal\avatars\EntityAvatarIdentifierInterface $identifier
    *   An entity avatar identifier.
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface|null $avatar_cache_existing
+   *   An existing avatar cache entity for this service ID and identifier, or
+   *   null if a new avatar cache should be created on success.
    *
    * @return \Drupal\avatars\Entity\AvatarCacheInterface|null
    *   An avatar cache entity, or NULL if the avatar failed to download.
    */
-  public function cacheRemote(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier): ?AvatarCacheInterface;
+  public function cacheRemote(string $service_id, string $uri, EntityAvatarIdentifierInterface $identifier, AvatarCacheInterface $avatar_cache_existing = NULL): ?AvatarCacheInterface;
 
   /**
    * Creates an empty avatar cache entity.
@@ -65,11 +71,14 @@ interface AvatarKitLocalCacheInterface {
    *   The URL of an avatar.
    * @param \Drupal\avatars\EntityAvatarIdentifierInterface $identifier
    *   An entity avatar identifier.
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface|null $avatar_cache_existing
+   *   An existing avatar cache entity for this service ID and identifier, or
+   *   null if a new avatar cache should be created on success.
    *
    * @return \Drupal\avatars\Entity\AvatarCacheInterface
    *   An avatar cache entity.
    */
-  public function cacheEmpty(string $service_id, ?string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface;
+  public function cacheEmpty(string $service_id, ?string $uri, EntityAvatarIdentifierInterface $identifier, AvatarCacheInterface $avatar_cache_existing = NULL) : AvatarCacheInterface;
 
   /**
    * Determines if caches for an entity need to be invalidated.

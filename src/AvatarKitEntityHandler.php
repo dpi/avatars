@@ -98,7 +98,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
         }
 
         // Try remote.
-        $cache = $cache ?? $this->entityLocalCache->cacheRemote(...$args);
+        $cache = $this->entityLocalCache->cacheRemote(...$args);
         if ($cache) {
           yield $service_id => $cache;
           continue;
