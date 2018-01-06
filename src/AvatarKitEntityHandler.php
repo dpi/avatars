@@ -86,13 +86,13 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       }
 
       // Check if the avatar for this entity service already exists.
-      $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
-      if ($cache) {
-        $needsUpdate = $this->cacheNeedsUpdate($service_plugin, $cache);
+      $cache_existing = $this->entityLocalCache->getLocalCache($service_id, $identifier);
+      if ($cache_existing) {
+        $needsUpdate = $this->cacheNeedsUpdate($service_plugin, $cache_existing);
         if (!$needsUpdate) {
           // Yield if there is a file.
-          if ($cache->getAvatar()) {
-            yield $service_id => $cache;
+          if ($cache_existing->getAvatar()) {
+            yield $service_id => $cache_existing;
           }
           continue;
         }
@@ -106,17 +106,17 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
         // Try local.
         $plugin_supports_local = $service_plugin->getPluginDefinition()['files'] ?? FALSE;
         if ($plugin_supports_local) {
-          $cache = $this->entityLocalCache->cacheLocalFileEntity(...$args);
-          if ($cache) {
-            yield $service_id => $cache;
+          $cache_local = $this->entityLocalCache->cacheLocalFileEntity(...$args);
+          if ($cache_local) {
+            yield $service_id => $cache_local;
             continue;
           }
         }
 
         // Try remote.
-        $cache = $this->entityLocalCache->cacheRemote(...$args);
-        if ($cache) {
-          yield $service_id => $cache;
+        $cache_remote = $this->entityLocalCache->cacheRemote(...$args);
+        if ($cache_remote) {
+          yield $service_id => $cache_remote;
           continue;
         }
       }
