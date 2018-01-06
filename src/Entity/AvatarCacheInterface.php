@@ -50,4 +50,20 @@ interface AvatarCacheInterface extends ContentEntityInterface {
    */
   public function getIdentifier(): string;
 
+  /**
+   * Gets the time avatar was checked
+   *
+   * @return int
+   *   The time avatar was checked
+   */
+  public function getLastCheckTime();
+
+  /**
+   * Mark the avatar as checked at current time.
+   *
+   * @return $this
+   *   Return this object for chaining.
+   */
+  public function markChecked();
+
 }

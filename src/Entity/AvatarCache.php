@@ -3,6 +3,7 @@
 namespace Drupal\avatars\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -59,6 +60,22 @@ class AvatarCache extends ContentEntityBase implements AvatarCacheInterface {
    */
   public function getIdentifier(): string {
     return $this->get('identifier')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLastCheckTime() {
+    return $this->get('last_check')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markChecked() {
+    $now = \Drupal::time()->getCurrentTime();
+    $this->set('last_check', $now);
+    return $this;
   }
 
   /**
