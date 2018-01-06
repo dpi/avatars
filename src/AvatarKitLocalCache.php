@@ -185,7 +185,8 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
    *   A filesystem URI.
    */
   protected function avatarFileName(string $service_id, EntityAvatarIdentifierInterface $identifier): string {
-    return \file_create_filename($identifier->getHashed(), 'public://avatar_kit/' . $service_id . '/identifier/');
+    $name = $identifier->getEntity()->id();
+    return \file_create_filename($name, 'public://avatar_kit/' . $service_id . '/identifier/');
   }
 
 }
