@@ -5,6 +5,7 @@ namespace Drupal\avatars;
 use Drupal\avatars\Entity\AvatarCacheInterface;
 use Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException;
 use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -35,16 +36,28 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   protected $preferenceManager;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * AvatarKitManager constructor.
    *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    * @param \Drupal\avatars\AvatarKitLocalCache $entityLocalCache
    *   Avatar Kit local cache.
    * @param \Drupal\avatars\AvatarKitEntityPreferenceManagerInterface $preferenceManager
    *   Avatar Kit preference manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, AvatarKitLocalCache $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
+  public function __construct(TimeInterface $time, EntityTypeManagerInterface $entityTypeManager, AvatarKitLocalCache $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
+    $this->time = $time;
     $this->serviceStorage = $entityTypeManager->getStorage('avatars_service');
     $this->entityLocalCache = $entityLocalCache;
     $this->preferenceManager = $preferenceManager;
@@ -75,11 +88,14 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       // Check if the avatar for this entity service already exists.
       $cache = $this->entityLocalCache->getLocalCache($service_id, $identifier);
       if ($cache) {
-        // Yield if there is a file.
-        if ($cache->getAvatar()) {
-          yield $service_id => $cache;
+        $needsUpdate = $this->cacheNeedsUpdate($service_plugin, $cache);
+        if (!$needsUpdate) {
+          // Yield if there is a file.
+          if ($cache->getAvatar()) {
+            yield $service_id => $cache;
+          }
+          continue;
         }
-        continue;
       }
 
       // A new cache needs to be created:
@@ -98,7 +114,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
         }
 
         // Try remote.
-        $cache = $cache ?? $this->entityLocalCache->cacheRemote(...$args);
+        $cache = $this->entityLocalCache->cacheRemote(...$args);
         if ($cache) {
           yield $service_id => $cache;
           continue;

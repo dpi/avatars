@@ -5,6 +5,8 @@ namespace Drupal\avatars;
 use Drupal\avatars\Entity\AvatarCacheInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\file\FileInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -84,15 +86,28 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
       return NULL;
     }
 
+    /** @var \Drupal\file\FileInterface $file */
     $file = reset($files);
 
-    /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
-    $avatar_cache = $this->avatarCacheStorage->create([
-      'avatar_service' => $service_id,
-      'identifier' => $identifier_hash,
-      'avatar' => $file,
-    ]);
-    $avatar_cache->save();
+    $avatar_cache = $this->getLocalCache($service_id, $identifier);
+    if ($avatar_cache) {
+      $existing_file = $avatar_cache->getAvatar();
+      if ($this->fileEntityIsDifferent($file, $existing_file)) {
+        $avatar_cache->setAvatar($file);
+      }
+    }
+    else {
+      /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
+      $avatar_cache = $this->avatarCacheStorage->create([
+        'avatar_service' => $service_id,
+        'identifier' => $identifier_hash,
+        'avatar' => $file,
+      ]);
+    }
+
+    $avatar_cache
+      ->markChecked()
+      ->save();
 
     return $avatar_cache;
   }
@@ -120,7 +135,18 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
         ->debug('Failed to download @service avatar for @entity_type #@entity_id. This failure is probably acceptable. Message is: @message', $log_args);
     }
 
+    $avatar_cache_existing = $this->getLocalCache($service_id, $identifier);
     if (isset($response)) {
+      if ($avatar_cache_existing) {
+        $contents_are_different = $this->contentsIsDifferent($avatar_cache_existing, $response);
+        if (!$contents_are_different) {
+          $avatar_cache_existing
+            ->markChecked()
+            ->save();
+          return $avatar_cache_existing;
+        }
+      }
+
       // Different try block since we want to log these exceptions.
       try {
         $filepath = $this->avatarFileName($service_id, $identifier);
@@ -136,15 +162,72 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
       return NULL;
     }
 
-    /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
-    $avatar_cache = $this->avatarCacheStorage->create([
-      'avatar_service' => $service_id,
-      'identifier' => $identifier_hash,
-      'avatar' => $file,
-    ]);
-    $avatar_cache->save();
+    if ($avatar_cache_existing) {
+      $avatar_cache = $avatar_cache_existing;
+    }
+    else {
+      /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
+      $avatar_cache = $this->avatarCacheStorage->create([
+        'avatar_service' => $service_id,
+        'identifier' => $identifier_hash,
+      ]);
+    }
+
+    $avatar_cache
+      ->markChecked()
+      ->setAvatar($file)
+      ->save();
 
     return $avatar_cache;
+  }
+
+  /**
+   * Compare whether two entities are different.
+   *
+   * @param \Drupal\file\FileInterface|null $a
+   *   A file entity, or NULL.
+   * @param \Drupal\file\FileInterface|null $b
+   *   A file entity, or NULL.
+   *
+   * @return bool
+   *   Whether two entities are different.
+   */
+  protected function fileEntityIsDifferent(?FileInterface $a, ?FileInterface $b) {
+    $a_id = $a ? $a->id() : NULL;
+    $b_id = $b ? $b->id() : NULL;
+    return $a_id != $b_id;
+  }
+
+  /**
+   * Checks whether avatar cache file is different to a downloaded file.
+   *
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache
+   *   An avatar cache entity.
+   * @param \Psr\Http\Message\ResponseInterface $response
+   *   A HTTP response.
+   *
+   * @return bool
+   *   Whether the files are different.
+   */
+  protected function contentsIsDifferent(AvatarCacheInterface $avatar_cache, ResponseInterface $response): bool {
+    $existing_file = $avatar_cache->getAvatar();
+    if (!$existing_file) {
+      return TRUE;
+    }
+
+    $existing_file_uri = $existing_file->getFileUri();
+    if (!$existing_file_uri) {
+      return TRUE;
+    }
+
+    // Returns false if file does not exist.
+    $existing_file_contents = file_get_contents($existing_file_uri);
+    if (!$existing_file_contents) {
+      return TRUE;
+    }
+
+    $contents = (string) $response->getBody();
+    return $contents != $existing_file_contents;
   }
 
   /**
@@ -153,13 +236,19 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   public function cacheEmpty(string $service_id, ?string $uri, EntityAvatarIdentifierInterface $identifier) : AvatarCacheInterface {
     $identifier_hash = $identifier->getHashed();
 
-    /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
-    $avatar_cache = $this->avatarCacheStorage->create([
-      'avatar_service' => $service_id,
-      'identifier' => $identifier_hash,
-      'avatar' => NULL,
-    ]);
-    $avatar_cache->save();
+    $avatar_cache = $this->getLocalCache($service_id, $identifier);
+    if (!$avatar_cache) {
+      /** @var \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache */
+      $avatar_cache = $this->avatarCacheStorage->create([
+        'avatar_service' => $service_id,
+        'identifier' => $identifier_hash,
+      ]);
+    }
+
+    $avatar_cache
+      ->markChecked()
+      ->setAvatar(NULL)
+      ->save();
 
     return $avatar_cache;
   }

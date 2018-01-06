@@ -33,7 +33,7 @@ services:
       - { name: event_subscriber }
   avatars.entity:
     class: Drupal\avatars\AvatarKitEntityHandler
-    arguments: ['@entity_type.manager', '@avatars.local_cache', '@avatars.entity_preference']
+    arguments: ['@datetime.time', '@entity_type.manager', '@avatars.local_cache', '@avatars.entity_preference']
   avatars.entity.field_handler:
     class: Drupal\avatars\AvatarKitEntityFieldHandler
     arguments: ['@avatars.entity']
