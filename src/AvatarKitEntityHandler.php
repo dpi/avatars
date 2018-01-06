@@ -170,7 +170,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
 
     $pluginConfiguration = $service_plugin->getConfiguration();
     $lifetime = $pluginConfiguration['lifetime'] ?? NULL;
-    return $lifetime ?  $checkTime < ($now - $lifetime) : FALSE;
+    return $lifetime ? $checkTime < ($now - $lifetime) : FALSE;
   }
 
 }

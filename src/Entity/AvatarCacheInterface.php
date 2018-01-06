@@ -51,10 +51,10 @@ interface AvatarCacheInterface extends ContentEntityInterface {
   public function getIdentifier(): string;
 
   /**
-   * Gets the time avatar was checked
+   * Gets the time avatar was checked.
    *
    * @return int
-   *   The time avatar was checked
+   *   The time avatar was checked.
    */
   public function getLastCheckTime();
 
