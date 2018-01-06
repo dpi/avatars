@@ -19,10 +19,14 @@ avatars.service.*:
 
 avatars.avatar_service.settings.*:
   type: mapping
-  mapping: []
+  mapping:
+    lifetime:
+      type: integer
+      label: 'Lifetime in seconds'
+      description: 'How long avatars should be cached. Applies to dynamic services only.'
 
 avatars.avatar_service_common_base:
-  type: mapping
+  type: avatars.avatar_service.settings.[%parent.plugin]
   mapping:
     width:
       type: integer

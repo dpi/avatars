@@ -131,4 +131,30 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
     return $new_identifier;
   }
 
+  /**
+   * Determine if an avatar cache needs to be checked.
+   *
+   * @param \Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface $service_plugin
+   *   An avatar service plugin.
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache
+   *   An avatar cache entity.
+   *
+   * @return bool
+   *   Whether the avatar cache needs to be re-checked.
+   */
+  protected function cacheNeedsUpdate(AvatarKitServiceInterface $service_plugin, AvatarCacheInterface $avatar_cache): bool {
+    $plugin_is_dynamic = $service_plugin->getPluginDefinition()['dynamic'] ?? FALSE;
+    if (!$plugin_is_dynamic) {
+      // Static avatars never need updates.
+      return FALSE;
+    }
+
+    $checkTime = $avatar_cache->getLastCheckTime() ?? 0;
+    $now = $this->time->getCurrentTime();
+
+    $pluginConfiguration = $service_plugin->getConfiguration();
+    $lifetime = $pluginConfiguration['lifetime'] ?? NULL;
+    return $lifetime ?  $checkTime < ($now - $lifetime) : FALSE;
+  }
+
 }
