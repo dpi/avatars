@@ -3,6 +3,8 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileInterface;
@@ -13,6 +15,13 @@ use Psr\Log\LoggerInterface;
  * Cache remote files locally into file entities.
  */
 class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
 
   /**
    * Storage for 'avatars_avatar_cache' entity.
@@ -45,6 +54,8 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   /**
    * Creates a new AvatarKitLocalCache instance.
    *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
@@ -52,7 +63,8 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
    * @param \Drupal\avatars\AvatarKitDownloadUtilityInterface $downloadUtility
    *   The download utility.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, LoggerInterface $logger, AvatarKitDownloadUtilityInterface $downloadUtility) {
+  public function __construct(TimeInterface $time, EntityTypeManagerInterface $entityTypeManager, LoggerInterface $logger, AvatarKitDownloadUtilityInterface $downloadUtility) {
+    $this->time = $time;
     $this->avatarCacheStorage = $entityTypeManager->getStorage('avatars_avatar_cache');
     $this->fileStorage = $entityTypeManager->getStorage('file');
     $this->logger = $logger;
@@ -276,6 +288,26 @@ class AvatarKitLocalCache implements AvatarKitLocalCacheInterface {
   protected function avatarFileName(string $service_id, EntityAvatarIdentifierInterface $identifier): string {
     $name = $identifier->getEntity()->id();
     return \file_create_filename($name, 'public://avatar_kit/' . $service_id . '/identifier/');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function cacheNeedsUpdate(AvatarCacheInterface $avatar_cache): bool {
+    $service_plugin = $avatar_cache->getAvatarService()->getPlugin();
+
+    $plugin_is_dynamic = $service_plugin->getPluginDefinition()['dynamic'] ?? FALSE;
+    if (!$plugin_is_dynamic) {
+      // Static avatars never need updates.
+      return FALSE;
+    }
+
+    $checkTime = $avatar_cache->getLastCheckTime() ?? 0;
+    $now = $this->time->getCurrentTime();
+
+    $pluginConfiguration = $service_plugin->getConfiguration();
+    $lifetime = $pluginConfiguration['lifetime'] ?? NULL;
+    return $lifetime ? $checkTime < ($now - $lifetime) : FALSE;
   }
 
 }

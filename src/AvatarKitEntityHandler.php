@@ -5,7 +5,6 @@ namespace Drupal\avatars;
 use Drupal\avatars\Entity\AvatarCacheInterface;
 use Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException;
 use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
-use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -24,7 +23,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   /**
    * Avatar Kit local cache.
    *
-   * @var \Drupal\avatars\AvatarKitLocalCache
+   * @var \Drupal\avatars\AvatarKitLocalCacheInterface
    */
   protected $entityLocalCache;
 
@@ -34,13 +33,6 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
    * @var AvatarKitEntityPreferenceManagerInterface
    */
   protected $preferenceManager;
-
-  /**
-   * The time service.
-   *
-   * @var \Drupal\Component\Datetime\TimeInterface
-   */
-  protected $time;
 
   /**
    * Whether this handler should be in read only mode.
@@ -54,19 +46,16 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   /**
    * AvatarKitManager constructor.
    *
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\avatars\AvatarKitLocalCache $entityLocalCache
+   * @param \Drupal\avatars\AvatarKitLocalCacheInterface $entityLocalCache
    *   Avatar Kit local cache.
    * @param \Drupal\avatars\AvatarKitEntityPreferenceManagerInterface $preferenceManager
    *   Avatar Kit preference manager.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(TimeInterface $time, EntityTypeManagerInterface $entityTypeManager, AvatarKitLocalCache $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
-    $this->time = $time;
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, AvatarKitLocalCacheInterface $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
     $this->serviceStorage = $entityTypeManager->getStorage('avatars_service');
     $this->entityLocalCache = $entityLocalCache;
     $this->preferenceManager = $preferenceManager;
@@ -97,7 +86,7 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       // Check if the avatar for this entity service already exists.
       $cache_existing = $this->entityLocalCache->getLocalCache($service_id, $identifier);
       if ($cache_existing) {
-        $needsUpdate = $this->cacheNeedsUpdate($service_plugin, $cache_existing);
+        $needsUpdate = $this->entityLocalCache->cacheNeedsUpdate($cache_existing);
         if ($this->isReadOnly() || !$needsUpdate) {
           // Yield if there is a file.
           if ($cache_existing->getAvatar()) {

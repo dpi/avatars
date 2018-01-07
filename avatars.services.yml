@@ -33,7 +33,7 @@ services:
       - { name: event_subscriber }
   avatars.entity:
     class: Drupal\avatars\AvatarKitEntityHandler
-    arguments: ['@datetime.time', '@entity_type.manager', '@avatars.local_cache', '@avatars.entity_preference']
+    arguments: ['@entity_type.manager', '@avatars.local_cache', '@avatars.entity_preference']
   avatars.entity.field_handler:
     class: Drupal\avatars\AvatarKitEntityFieldHandler
     arguments: ['@avatars.entity']
@@ -41,7 +41,7 @@ services:
     class: Drupal\avatars\AvatarKitFormAlter
   avatars.local_cache:
     class: Drupal\avatars\AvatarKitLocalCache
-    arguments: ['@entity_type.manager', '@logger.channel.avatars', '@avatars.utility.download']
+    arguments: ['@datetime.time', '@entity_type.manager', '@logger.channel.avatars', '@avatars.utility.download']
   avatars.utility.download:
     class: Drupal\avatars\AvatarKitDownloadUtility
     arguments: ['@entity_type.manager', '@file_system', '@file.usage', '@http_client', '@logger.channel.avatars']

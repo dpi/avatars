@@ -3,6 +3,7 @@
 namespace Drupal\avatars;
 
 use Drupal\avatars\Entity\AvatarCacheInterface;
+use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -80,5 +81,16 @@ interface AvatarKitLocalCacheInterface {
    *   The entity to invalidate.
    */
   public function invalidateCaches(EntityInterface $entity): void;
+
+  /**
+   * Determine if an avatar cache needs to be checked.
+   *
+   * @param \Drupal\avatars\Entity\AvatarCacheInterface $avatar_cache
+   *   An avatar cache entity.
+   *
+   * @return bool
+   *   Whether the avatar cache needs to be re-checked.
+   */
+  public function cacheNeedsUpdate(AvatarCacheInterface $avatar_cache): bool;
 
 }
