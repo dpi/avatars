@@ -66,7 +66,6 @@ class AvatarKitServicesForm extends ConfigFormBase {
     $headers = [
       'label' => $this->t('Service'),
       'plugin' => $this->t('Plugin'),
-      'weight' => $this->t('Weight'),
       'operations' => $this->t('Operations'),
     ];
 
@@ -87,25 +86,17 @@ class AvatarKitServicesForm extends ConfigFormBase {
 
     /** @var \Drupal\avatars\Entity\AvatarKitServiceInterface[] $instances */
     $instances = AvatarKitService::loadMultiple();
-    uasort($instances, [AvatarKitService::class, 'sort']);
+    // Sort alphabetically by label.
+    uasort($instances, function (AvatarKitServiceInterface $a, AvatarKitServiceInterface $b) {
+      return strnatcasecmp($a->label(), $b->label());
+    });
     foreach ($instances as $instance) {
       $row = [];
 
-      $row['#attributes']['class'][] = 'draggable';
       $row['label']['#plain_text'] = $instance->label();
 
       $definition = $instance->getPlugin()->getPluginDefinition();
       $row['plugin']['#plain_text'] = $definition['label'] ?? '';
-
-      $row['weight'] = [
-        '#type' => 'weight',
-        '#title' => $this->t('Weight'),
-        '#title_display' => 'invisible',
-        '#default_value' => $instance->getWeight(),
-        '#attributes' => [
-          'class' => [$table_drag_group],
-        ],
-      ];
 
       $row['operations'] = [
         '#type' => 'operations',
@@ -116,26 +107,9 @@ class AvatarKitServicesForm extends ConfigFormBase {
       $form['services'][$id] = $row;
     }
 
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) : void {
-    parent::submitForm($form, $form_state);
-
-    // Invalidate cached preferences for entities.
-    $this->preferenceCacheBackend->invalidateAll();
-
-    // Generators are already sorted correctly.
-    foreach ($form_state->getValue('services') as $id => $row) {
-      /** @var \Drupal\avatars\Entity\AvatarKitService $instance */
-      $instance = AvatarKitService::load($id);
-      $instance
-        ->setWeight($row['weight'])
-        ->save();
-    }
+    $form = parent::buildForm($form, $form_state);
+    unset($form['actions']);
+    return $form;
   }
 
   /**
