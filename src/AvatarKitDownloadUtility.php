@@ -124,6 +124,7 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
     /** @var \Drupal\file\FileInterface $file */
     $file = $this->fileStorage->create();
     $file->setFileUri($final_filepath);
+    $file->setFilename(drupal_basename($final_filepath));
     $file->setPermanent();
 
     // `$violation_count = $this->logViolations($file);`.
