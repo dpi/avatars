@@ -66,8 +66,8 @@ abstract class AvatarKitServiceBase extends PluginBase implements AvatarKitServi
         '#min' => 60,
         '#field_suffix' => $this->t('seconds'),
         '#options' => [
-          'unlimited' => $this->t('Never delete'),
-          'limited' => $this->t('Delete after'),
+          'unlimited' => $this->t('Never check'),
+          'limited' => $this->t('Check after'),
         ],
       ];
     }
