@@ -119,12 +119,15 @@ class AvatarKitDownloadUtility implements AvatarKitDownloadUtilityInterface {
       return NULL;
     }
 
+    $mime = $response->getHeaderLine('Content-Type');
+
     // Create file entity.
     // file_save_data() used as inspiration.
     /** @var \Drupal\file\FileInterface $file */
     $file = $this->fileStorage->create();
     $file->setFileUri($final_filepath);
     $file->setFilename(drupal_basename($final_filepath));
+    $file->setMimeType($mime);
     $file->setPermanent();
 
     // `$violation_count = $this->logViolations($file);`.
