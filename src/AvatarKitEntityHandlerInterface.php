@@ -39,4 +39,20 @@ interface AvatarKitEntityHandlerInterface {
    */
   public function findAll(EntityInterface $entity): \Generator;
 
+  /**
+   * Determine whether the service is in read only mode.
+   *
+   * @return bool
+   *   Whether the service is in read only mode.
+   */
+  public function isReadOnly(): bool;
+
+  /**
+   * Set whether the service is in read only mode.
+   *
+   * @param bool $readOnly
+   *   Whether the service is in read only mode.
+   */
+  public function setReadOnly(bool $readOnly): void;
+
 }

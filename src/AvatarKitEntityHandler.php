@@ -43,6 +43,15 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   protected $time;
 
   /**
+   * Whether this handler should be in read only mode.
+   *
+   * If set to true, then no avatar cache entities will be saved or updated.
+   *
+   * @var bool
+   */
+  protected $readOnly = FALSE;
+
+  /**
    * AvatarKitManager constructor.
    *
    * @param \Drupal\Component\Datetime\TimeInterface $time
@@ -89,13 +98,17 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
       $cache_existing = $this->entityLocalCache->getLocalCache($service_id, $identifier);
       if ($cache_existing) {
         $needsUpdate = $this->cacheNeedsUpdate($service_plugin, $cache_existing);
-        if (!$needsUpdate) {
+        if ($this->isReadOnly() || !$needsUpdate) {
           // Yield if there is a file.
           if ($cache_existing->getAvatar()) {
             yield $service_id => $cache_existing;
           }
           continue;
         }
+      }
+
+      if ($this->isReadOnly()) {
+        continue;
       }
 
       // A new cache needs to be created:
@@ -171,6 +184,20 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
     $pluginConfiguration = $service_plugin->getConfiguration();
     $lifetime = $pluginConfiguration['lifetime'] ?? NULL;
     return $lifetime ? $checkTime < ($now - $lifetime) : FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isReadOnly(): bool {
+    return $this->readOnly;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setReadOnly(bool $readOnly): void {
+    $this->readOnly = $readOnly;
   }
 
 }
