@@ -85,6 +85,7 @@ class AvatarKitEntityMappingForm extends ConfigFormBase {
       'weight' => $this->t('Bundle'),
       'field' => $this->t('Field'),
       'field_settings' => $this->t('Field settings'),
+      'debug' => $this->t('Debug'),
     ];
 
     $form['map'] = [
@@ -151,6 +152,14 @@ class AvatarKitEntityMappingForm extends ConfigFormBase {
           // When field_ui is not enabled.
         }
       }
+
+      $url = Url::fromRoute('avatars.config.entity_map.entity_query')
+        ->setRouteParameter('entity_type_id', $entityType);
+      $row['debug']['link'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Entity query'),
+        '#url' => $url,
+      ];
 
       $form['map'][$key] = $row;
     }

@@ -14,6 +14,14 @@ avatars.config.entity_map:
   requirements:
     _permission: 'administer avatars'
 
+avatars.config.entity_map.entity_query:
+  path: '/admin/config/people/avatars/entity-mapping/{entity_type_id}/query'
+  defaults:
+    _form: 'Drupal\avatars\Form\AvatarKitQueryForm'
+    _title: 'Entity query'
+  requirements:
+    _permission: 'administer avatars'
+
 avatars.config.settings:
   path: '/admin/config/people/avatars/settings'
   defaults:
