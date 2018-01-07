@@ -18,6 +18,13 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 class AvatarKitEntityMappingForm extends ConfigFormBase {
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Storage for entity mapping configuration entities.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
@@ -43,6 +50,7 @@ class AvatarKitEntityMappingForm extends ConfigFormBase {
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entityTypeManager, EntityFieldManagerInterface $entityFieldManager) {
     parent::__construct($config_factory);
+    $this->entityTypeManager = $entityTypeManager;
     $this->entityMappingStorage = $entityTypeManager->getStorage('avatars_entity_mapping');
     $this->entityFieldManager = $entityFieldManager;
   }
@@ -119,6 +127,7 @@ class AvatarKitEntityMappingForm extends ConfigFormBase {
 
     foreach ($fieldsOptions as $key => $options) {
       [$entityType, $bundle] = explode(':', $key);
+      $entityTypeDefinition = $this->entityTypeManager->getDefinition($entityType);
 
       $id = $entityType . '.' . $bundle . '.default';
       $entityMap = $this->entityMappingStorage->load($id);
@@ -142,6 +151,14 @@ class AvatarKitEntityMappingForm extends ConfigFormBase {
         try {
           $url = Url::fromRoute('entity.field_config.' . $entityType . '_field_edit_form')
             ->setRouteParameter('field_config', $fieldConfigId);
+
+          $bundleKey = $entityTypeDefinition->getKey('bundle');
+          if ($bundleKey) {
+            // Field UI expects bundle parameter if the entity type supports
+            // bundles.
+            $url->setRouteParameter($bundleKey, $bundle);
+          }
+
           $row['field_settings']['link'] = [
             '#type' => 'link',
             '#title' => $this->t('Settings'),
