@@ -7,6 +7,7 @@ use Drupal\avatars\Exception\AvatarKitEntityAvatarIdentifierException;
 use Drupal\avatars\Plugin\Avatars\Service\AvatarKitServiceInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Downloads and caches avatars into entities.
@@ -44,10 +45,19 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
   protected $readOnly = FALSE;
 
   /**
+   * The logger instance.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * AvatarKitManager constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logger instance.
    * @param \Drupal\avatars\AvatarKitLocalCacheInterface $entityLocalCache
    *   Avatar Kit local cache.
    * @param \Drupal\avatars\AvatarKitEntityPreferenceManagerInterface $preferenceManager
@@ -55,10 +65,11 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, AvatarKitLocalCacheInterface $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, LoggerInterface $logger, AvatarKitLocalCacheInterface $entityLocalCache, AvatarKitEntityPreferenceManagerInterface $preferenceManager) {
     $this->serviceStorage = $entityTypeManager->getStorage('avatars_service');
     $this->entityLocalCache = $entityLocalCache;
     $this->preferenceManager = $preferenceManager;
+    $this->logger = $logger;
   }
 
   /**
@@ -80,6 +91,10 @@ class AvatarKitEntityHandler implements AvatarKitEntityHandlerInterface {
         $identifier = $this->createEntityIdentifier($service_plugin, $entity);
       }
       catch (AvatarKitEntityAvatarIdentifierException $e) {
+        $this->logger->debug('No identifier for entity %entity_type:%id', [
+          '%entity_type' => $entity->getEntityTypeId(),
+          '%id' => $entity->id(),
+        ]);
         continue;
       }
 
